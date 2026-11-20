@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es-PE">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Política de privacidad | FlowLab Studio</title>
+<meta name="description" content="Qué datos trata FlowLab Studio: tu voz y tus letras se quedan en tu dispositivo. Conforme a la Ley N.º 29733 de Protección de Datos Personales del Perú.">
+<meta name="robots" content="noindex,follow">
+<meta name="theme-color" content="#39ff14">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="legal.css">
+</head>
+<body>
+<main class="doc">
+  <div class="top">
+    <a class="brand" href="./"><span class="tile"><img src="assets/logo.svg" alt="Logotipo de FlowLab Studio"></span>FlowLab Studio</a>
+    <a href="./">← Volver al estudio</a>
+  </div>
+
+  <h1>Política de privacidad</h1>
+  <p class="meta">Última actualización: 20 de noviembre de 2026</p>
+
+  <p>Los responsables del proyecto de código abierto FlowLab Open (contacto: la sección de incidencias <em>Issues</em> del repositorio) son quienes publican esta copia de la app. Esta política explica, en palabras simples, qué datos trata la aplicación, conforme a la <strong>Ley N.º 29733, Ley de Protección de Datos Personales</strong>, y su reglamento (D. S. N.º 016-2024-JUS).</p>
+
+  <div class="resumen"><strong>En corto:</strong> tu voz, tus letras y tu progreso se quedan en tu dispositivo. FlowLab Studio no tiene cuentas, no usa cookies de rastreo y no usa publicidad. <strong>Coach IA (opcional):</strong> solo si tú pulsas "Generar", el texto que escribiste en el Coach se procesa en tu dispositivo si es posible; si no, se envía a Google (Gemini) para generar la respuesta. Tu audio nunca se envía.</div>
+
+  <h2>1. Qué se guarda en tu dispositivo</h2>
+  <p>La app usa el almacenamiento local de tu navegador para guardar:</p>
+  <ul>
+    <li>tus letras y tus temas;</li>
+    <li>tus ajustes de la cabina de voz (efectos, escala, volúmenes) y el BPM;</li>
+    <li>el último link de YouTube que pusiste;</li>
+    <li>tu progreso en la Escuela de Freestyle (puntos, rango, racha, historial y récords);
+    <li>tu idioma (español o inglés) y si ya leíste el aviso del Coach IA;</li>
+    <li>una copia de los archivos de la app, para que abra rápido y funcione sin internet.</li>
+  </ul>
+  <p>Estos datos no se envían a ningún servidor de FlowLab Studio. Puedes borrarlos cuando quieras desde la configuración de tu navegador (borrar datos del sitio) o con los botones "Limpiar" y "Reiniciar" de la app.</p>
+
+  <h2>2. Tu voz y tu audio</h2>
+  <p>El micrófono se usa solo cuando pulsas <strong>Grabar</strong> o activas <strong>Escucharme en vivo</strong>. El audio se procesa dentro de tu navegador y <strong>no se sube a ningún servidor</strong>. Tus grabaciones viven en la memoria de la página y se pierden al cerrarla, salvo que las descargues como archivo WAV. Las bases MP3 o WAV que cargas tampoco salen de tu dispositivo.</p>
+
+  <h2>3. Dictado de letra y "Verificar con mi voz"</h2>
+  <p>Con <strong>"Verificar con mi voz"</strong>, mientras juegas la Escuela el navegador escucha tu micrófono, convierte lo que dices en texto y FlowLab Studio compara ese texto, <strong>solo dentro de tu dispositivo</strong>, con las palabras que pedía cada consigna para contar los aciertos. De esa ronda solo se guardan en tu navegador números (puntaje, XP, cuántas palabras dijiste) y si fue verificada; <strong>no se guarda ni el audio ni el texto de lo que dijiste</strong>. Si tu navegador no ofrece este reconocimiento o falla, el juego te pregunta cómo te fue y esa ronda se marca como "sin verificar".</p>
+  <p>Estas dos funciones, que solo se activan cuando tú las enciendes, usan el <strong>reconocimiento de voz de tu navegador</strong>. Según el navegador, el audio se envía al servicio de voz de su proveedor (por ejemplo, Google o Microsoft) para convertirlo en texto, bajo la política de privacidad de ese proveedor. FlowLab Studio no recibe ese audio.</p>
+
+  <h2>3 bis. Coach de freestyle con IA (opcional)</h2>
+  <p>El <strong>Coach IA</strong> (botón "🤖 Coach IA", "Mejorar con IA" y "Desahógate con IA") solo funciona cuando <strong>tú pulsas</strong> el botón de generar. Usa <strong>Firebase AI Logic</strong> de Google en modo híbrido:</p>
+  <ul>
+    <li><strong>En tu dispositivo (si es posible):</strong> si tu Chrome de escritorio tiene el modelo local Gemini Nano, el texto se procesa dentro de tu equipo y no sale de él. La primera vez el modelo puede tardar en descargarse.</li>
+    <li><strong>En la nube (si no hay modelo local):</strong> el texto que enviaste (tu letra de 4 a 16 líneas, o la emoción que elegiste) se envía a Google (Gemini Developer API, plan gratuito) para generar la respuesta, bajo la política de privacidad de Google. FlowLab Studio no guarda ese texto ni la respuesta.</li>
+    <li><strong>Lo que nunca se envía:</strong> tu audio, tus grabaciones, tus otras letras ni tu progreso. Si un texto parece hablar de una crisis personal grave, el Coach no lo envía a ninguna IA y te muestra un mensaje de apoyo.</li>
+    <li><strong>Antes del primer uso</strong> se muestra un aviso y debes pulsar "Entendido". Mientras no abras el Coach y pulses generar, no se carga ningún servicio de Google para esta función.</li>
+  </ul>
+  <p>Para evitar abusos el servicio usa <strong>Firebase App Check</strong>, que puede contactar a Google (<em>content-firebaseappcheck.googleapis.com</em> y, en la web real, <em>reCAPTCHA</em> de Google: <em>www.google.com/recaptcha</em> y <em>www.gstatic.com</em>) para comprobar que quien pide la respuesta es esta app y no un robot. Google recibe tu dirección IP y datos técnicos del navegador, y reCAPTCHA puede usar cookies o almacenamiento propio para distinguir personas de robots, bajo la política de Google. Los dominios contactados por esta función son: <em>www.gstatic.com</em> (código del SDK), <em>firebasevertexai.googleapis.com</em> (la respuesta de IA), <em>content-firebaseappcheck.googleapis.com</em> y <em>www.google.com/recaptcha</em> (App Check). FlowLab Studio no usa Google Analytics.</p>
+
+  <h2>4. Servicios de terceros</h2>
+  <ul>
+    <li><strong>YouTube (Google):</strong> solo cuando cargas un link de YouTube, tu navegador se conecta a YouTube para mostrar el reproductor. YouTube puede usar cookies y recibir tu dirección IP y datos de tu dispositivo, según su propia política. Si nunca cargas un link, no se conecta.</li>
+    <li><strong>Datamuse (sugerencias de rimas):</strong> cuando el diccionario interno tiene pocas rimas, la app consulta <em>api.datamuse.com</em> y le envía únicamente las <strong>últimas 3 letras</strong> de la última palabra de la línea donde escribes, nunca tu letra completa. Datamuse recibe además tu dirección IP.</li>
+    <li><strong>Alojamiento del sitio:</strong> el servicio que aloja esta web puede registrar datos técnicos de las visitas (como la dirección IP y el tipo de navegador) por seguridad y funcionamiento.</li>
+  </ul>
+
+  <h2>5. Cookies y analítica</h2>
+  <p>FlowLab Studio no usa cookies propias de rastreo ni publicidad. Las cookies que pudiera usar YouTube dependen de ese servicio. Si usas el Coach IA en la web publicada, reCAPTCHA de Google (App Check) puede usar su propio almacenamiento para distinguir personas de robots (ver punto 3 bis); FlowLab Studio no lo usa para rastrearte.</p>
+
+  <h2>6. Si nos escribes</h2>
+  <p>Si te comunicas con nosotros, usaremos tu mensaje y tu correo solo para responderte y los guardaremos mientras sea necesario para atender tu consulta. No vendemos ni cedemos tus datos a terceros.</p>
+
+  <h2>7. Menores de edad</h2>
+  <p>Si eres menor de edad, usa la app con el apoyo de una persona adulta.</p>
+
+  <h2>8. Tus derechos (ARCO)</h2>
+  <p>Como no guardamos tus letras, tu voz ni tu progreso en servidores propios, los datos que están en tu dispositivo los controlas tú. Si nos escribiste y quieres <strong>acceder, rectificar, cancelar u oponerte</strong> al uso de ese mensaje, abre una incidencia en el repositorio y te responderemos en los plazos que fija la ley. Si no estás conforme, puedes acudir a la Autoridad Nacional de Protección de Datos Personales del Ministerio de Justicia y Derechos Humanos.</p>
+
+  <h2>9. Cambios</h2>
+  <p>Si actualizamos esta política, publicaremos aquí la nueva versión con su fecha.</p>
+
+  <p class="pie"><a href="./">Volver al estudio</a></p>
+</main>
+</body>
+</html>

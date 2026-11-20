@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Logotipo de FlowLab Studio">
+  <title>FlowLab Studio</title>
+  <defs>
+    <linearGradient id="neon" gradientUnits="userSpaceOnUse" x1="60" y1="40" x2="452" y2="472">
+      <stop offset="0" stop-color="#7dff3a"/>
+      <stop offset="1" stop-color="#1fe05a"/>
+    </linearGradient>
+    <radialGradient id="disc" cx="50%" cy="38%" r="70%">
+      <stop offset="0" stop-color="#1b2a1d"/>
+      <stop offset="1" stop-color="#0a0d0b"/>
+    </radialGradient>
+    <clipPath id="cap"><rect x="206" y="84" width="100" height="164" rx="50"/></clipPath>
+  </defs>
+  <!-- insignia -->
+  <circle cx="256" cy="256" r="238" fill="url(#disc)"/>
+  <circle cx="256" cy="256" r="236" fill="none" stroke="url(#neon)" stroke-width="12"/>
+  <!-- ondas de sonido: el "flow" -->
+  <g stroke="url(#neon)" stroke-width="14" stroke-linecap="round">
+    <line x1="150" y1="168" x2="150" y2="208"/>
+    <line x1="120" y1="146" x2="120" y2="230"/>
+    <line x1="90"  y1="170" x2="90"  y2="206"/>
+    <line x1="362" y1="168" x2="362" y2="208"/>
+    <line x1="392" y1="146" x2="392" y2="230"/>
+    <line x1="422" y1="170" x2="422" y2="206"/>
+  </g>
+  <!-- micrófono de estudio -->
+  <rect x="206" y="84" width="100" height="164" rx="50" fill="#0f1511" stroke="url(#neon)" stroke-width="12"/>
+  <g clip-path="url(#cap)" stroke="url(#neon)" stroke-width="7" stroke-linecap="round" opacity=".9">
+    <line x1="206" y1="124" x2="306" y2="124"/>
+    <line x1="206" y1="152" x2="306" y2="152"/>
+    <line x1="206" y1="180" x2="306" y2="180"/>
+    <line x1="206" y1="208" x2="306" y2="208"/>
+  </g>
+  <path d="M168 214 a88 88 0 0 0 176 0" fill="none" stroke="url(#neon)" stroke-width="12" stroke-linecap="round"/>
+  <line x1="256" y1="302" x2="256" y2="352" stroke="url(#neon)" stroke-width="12" stroke-linecap="round"/>
+  <line x1="204" y1="360" x2="308" y2="360" stroke="url(#neon)" stroke-width="14" stroke-linecap="round"/>
+  <!-- líneas de letra: lo "lírico" -->
+  <g stroke="#e8ecef" stroke-linecap="round" opacity=".85">
+    <line x1="196" y1="398" x2="316" y2="398" stroke-width="8"/>
+    <line x1="220" y1="420" x2="292" y2="420" stroke-width="8"/>
+  </g>
+</svg>

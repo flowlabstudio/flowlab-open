@@ -1,0 +1,10 @@
+FlowLab Open
+Copyright 2026 The FlowLab Open contributors
+
+This product includes software developed for the #BuildHybridAI challenge.
+
+Third-party components, used under their own licenses:
+- Inter variable font (public/assets/fonts/) - SIL Open Font License 1.1 (license text included in that folder).
+- Firebase JS SDK (loaded at run time from www.gstatic.com when the user opens the AI Coach) - Apache-2.0, (c) Google LLC.
+
+The "FlowLab Studio" name and logo are not licensed for use as a trademark (see section 6 of the Apache License 2.0).

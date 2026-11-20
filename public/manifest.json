@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "FlowLab Studio",
+  "short_name": "FlowLab",
+  "description": "Estudio lírico y vocal urbano: letras con rimas y sílabas, cabina de voz con Auto-Tune y Escuela de Freestyle.",
+  "lang": "es-PE",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0D0D0D",
+  "theme_color": "#DEFC07",
+  "categories": ["music", "education", "entertainment"],
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

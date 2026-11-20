@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="es-PE">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://www.gstatic.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; frame-src https://www.youtube.com https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/; connect-src 'self' https://api.datamuse.com https://content-firebaseappcheck.googleapis.com https://firebasevertexai.googleapis.com; img-src 'self'; style-src 'self' 'unsafe-inline'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>FlowLab Studio · Estudio Lírico y Vocal Urbano</title>
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preload" href="assets/fonts/inter-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<meta name="theme-color" content="#DEFC07">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="FlowLab">
+<meta name="description" content="Escribe letras con rimas y contador de sílabas, graba tu voz con Auto-Tune y entrena freestyle con juegos por niveles. Gratis, desde tu navegador.">
+<link rel="canonical" href="https://flowlab-studio.pages.dev/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FlowLab Studio">
+<meta property="og:title" content="FlowLab Studio · Estudio lírico y vocal urbano">
+<meta property="og:description" content="Escribe letras con rimas y contador de sílabas, graba tu voz con Auto-Tune y entrena freestyle con juegos por niveles. Gratis, desde tu navegador.">
+<meta property="og:image" content="https://flowlab-studio.pages.dev/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logotipo de FlowLab Studio: micrófono de estudio con ondas de sonido en verde neón, sobre fondo oscuro">
+<meta property="og:url" content="https://flowlab-studio.pages.dev/">
+<meta property="og:locale" content="es_PE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FlowLab Studio · Estudio lírico y vocal urbano">
+<meta name="twitter:description" content="Escribe letras con rimas y contador de sílabas, graba tu voz con Auto-Tune y entrena freestyle con juegos por niveles. Gratis, desde tu navegador.">
+<meta name="twitter:image" content="https://flowlab-studio.pages.dev/assets/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "FlowLab Studio",
+  "url": "https://flowlab-studio.pages.dev/",
+  "description": "Escribe letras con rimas y contador de sílabas, graba tu voz con Auto-Tune y entrena freestyle con juegos por niveles. Gratis, desde tu navegador.",
+  "applicationCategory": "MultimediaApplication",
+  "operatingSystem": "Web (Chrome, Edge, Opera)",
+  "browserRequirements": "Requiere un navegador con Web Audio y micrófono.",
+  "inLanguage": "es-PE",
+  "image": "https://flowlab-studio.pages.dev/assets/og-image.png"
+}
+</script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#app">Saltar al contenido</a>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark"><img src="assets/logo.svg" alt="Logotipo de FlowLab Studio" width="40" height="40"></div>
+    <div class="brand-text">
+      <h1>FlowLab <span class="h1-sub">Studio</span></h1>
+      <p>Estudio lírico &amp; vocal urbano</p>
+    </div>
+  </div>
+
+  <div class="mode-now" aria-live="polite">
+    <b id="modeName">MODO CABINA</b>
+    <small id="modeTag">Escribe, graba y mezcla.</small>
+  </div>
+
+  <nav class="modes" role="tablist" aria-label="Modos de FlowLab">
+    <button type="button" role="tab" id="tab-cabina" class="mode-tab on" data-mode-tab="cabina" aria-selected="true" aria-controls="mode-cabina"><i>01</i>Cabina</button>
+    <button type="button" role="tab" id="tab-beats" class="mode-tab" data-mode-tab="beats" aria-selected="false" aria-controls="mode-beats" tabindex="-1"><i>02</i>Beats</button>
+    <button type="button" role="tab" id="tab-escuela" class="mode-tab" data-mode-tab="escuela" aria-selected="false" aria-controls="mode-escuela" tabindex="-1"><i>03</i>Escuela</button>
+  </nav>
+    <button type="button" id="modeInfo" class="mode-info" aria-label="Ver cómo funciona este modo" title="¿Cómo funciona este modo?" aria-expanded="false">ℹ️</button>
+
+
+  <div class="status-strip">
+    <button type="button" id="recPill" class="rec-pill hidden" title="Estás grabando: toca para volver a la Cabina">● REC <b id="recPillTime">00:00</b></button>
+    <select id="langSel" class="lang-sel" aria-label="Idioma / Language" title="Idioma / Language"><option value="es">ES · Español</option><option value="en">EN · English</option></select>
+    <button type="button" id="btnCoach" class="glos-btn" aria-haspopup="dialog" aria-expanded="false" title="Coach de freestyle con IA: mejora tu letra o desahógate con ideas">🤖 Coach IA</button>
+    <button type="button" id="btnGlosario" class="glos-btn" aria-haspopup="dialog" aria-expanded="false" title="Glosario y ayuda: qué significa cada palabra">📖 Glosario</button>
+    <button type="button" id="installApp" class="install-btn hidden" title="Instalar FlowLab Studio como app en este dispositivo">⬇ Instalar app</button>
+    <span class="status-text"><span class="live-dot" aria-hidden="true"></span>SESIÓN · <b id="clock">--:--:--</b></span>
+  </div>
+</header>
+
+<div id="serverWarn" class="server-warn hidden">
+  ⚠️ Abriste el estudio como archivo local (file://). El Auto-Tune (AudioWorklet) y la sincronía con YouTube necesitan un servidor local:
+  haz doble clic en <b>INICIAR-ESTUDIO.bat</b>. Mientras tanto la grabación funciona en modo voz limpia.
+</div>
+
+<main class="app" id="app">
+
+  <!-- ============ BASE · las tres formas de poner el beat (Cabina y Escuela) ============ -->
+  <section class="base-bar" id="panel-beat" data-show-in="cabina beats escuela" aria-label="Base: el beat de fondo">
+    <h2 class="step-title"><span class="num">1</span> Elige la base <small>un link de YouTube, tu MP3/WAV o un beat de FlowLab</small></h2>
+    <div class="base-cards">
+      <div class="base-card bc-yt" id="bc-yt">
+        <label class="bc-head" for="ytInput"><i>01</i><b>Pegar link de YouTube</b><span class="bc-dot" aria-hidden="true"></span></label>
+        <div class="bc-body">
+          <input id="ytInput" type="url" placeholder="Pega link de YouTube…" autocomplete="off">
+          <button id="ytLoad" type="button" class="btn btn-cyan">Cargar</button>
+        </div>
+      </div>
+
+      <div class="base-card bc-file" id="bc-file">
+        <label id="dropZone" class="drop-zone" for="baseFile" tabindex="0">
+          <input id="baseFile" type="file" accept=".mp3,.wav,audio/mpeg,audio/wav,audio/x-wav" hidden>
+          <span class="bc-head"><i>02</i><b class="dz-title">Subir mi MP3 / WAV</b><span class="bc-dot" aria-hidden="true"></span></span>
+          <span class="dz-text">Toca o arrástralo aquí · se queda en tu equipo, sin servidor</span>
+        </label>
+      </div>
+
+      <div class="bc-stack">
+        <button type="button" class="base-card bc-beat" id="beatQuick">
+          <span class="bc-head"><i>03</i><b>Armar beat rápido</b><span class="bc-dot" aria-hidden="true"></span></span>
+          <span class="dz-text">Crea tu propio ritmo con pads en el modo Beats</span>
+        </button>
+        <button type="button" class="btn btn-ghost bc-house-btn" id="houseToggle" aria-expanded="false" aria-controls="housePanel">🎵 Elegir un beat de FlowLab</button>
+      </div>
+    </div>
+
+    <div class="house-panel hidden" id="housePanel">
+      <h3 id="houseTitle">Beat de FlowLab · se carga como Pista 1, en bucle</h3>
+      <div class="bt-genres" id="houseGenres" role="group" aria-labelledby="houseTitle"></div>
+      <p class="bt-gtag" id="houseTag"></p>
+      <div class="bt-cards" id="houseCards" aria-live="polite"><p class="hint">Cargando ritmos…</p></div>
+      <p class="hint house-msg" id="houseMsg" role="status">Con un beat de FlowLab sí puedes grabar y exportar tu voz con el beat en un solo archivo.</p>
+    </div>
+
+    <div class="base-now">
+      <div class="base-info">
+        <div id="baseLabel" class="base-label">Base activa: <b>ninguna</b></div>
+        <p class="hint">YouTube: watch?v=, youtu.be, /shorts/, /embed/… · Para exportar la mezcla final usa una base MP3/WAV.</p>
+      </div>
+      <div class="yt-frame off" id="ytWrap">
+        <div id="ytPlayer"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MODO CABINA ============ -->
+  <div class="mode-pane" id="mode-cabina" data-mode="cabina" role="tabpanel" aria-labelledby="tab-cabina">
+    <div class="audio-banner" data-audio-banner role="status" aria-live="polite">
+      <span>🔊 <b>Toca para activar el sonido.</b> Si no oyes nada: quita el <b>modo silencio</b> del celular (interruptor al costado) y sube el volumen.</span>
+    </div>
+
+    <!-- Bloc de notas / Modo entrenamiento (el estímulo) -->
+    <section class="panel panel-estimulo" id="panel-lyrics" aria-label="Bloc de notas y modo entrenamiento">
+      <div class="est-tabs" role="tablist" aria-label="Escribir o entrenar">
+        <button type="button" role="tab" id="etab-notas" class="est-tab on" data-estimulo-tab="notas" aria-selected="true" aria-controls="est-notas">Bloc de notas</button>
+        <button type="button" role="tab" id="etab-entrenamiento" class="est-tab" data-estimulo-tab="entrenamiento" aria-selected="false" aria-controls="est-entrenamiento" tabindex="-1">↗ Modo entrenamiento</button>
+        <span class="est-spacer"></span>
+        <label class="est-type hidden" id="stimTypeWrap"><span class="sr-only">Tipo de estímulo</span>
+          <select id="stimType" aria-label="Tipo de estímulo">
+            <option value="palabras">Palabras</option>
+            <option value="temas">Temas</option>
+            <option value="pies">Pies forzados</option>
+            <option value="contrastes">Contrastes</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Pestaña 1: el bloc de notas de siempre -->
+      <div class="est-pane" id="est-notas" role="tabpanel" aria-labelledby="etab-notas">
+        <div class="lyrics-head">
+          <h2 class="eyebrow"><span class="num">✎</span> Letras · editor lírico y contador de sílabas</h2>
+          <div class="stats">
+            <div class="stat">Líneas: <b id="lineCount">0</b></div>
+            <div class="stat">Sílabas totales: <b id="totalSyll">0</b></div>
+            <div class="stat">Prom. sílabas/línea: <b id="avgSyll">0.0</b></div>
+            <div class="stat save-state" id="saveState">✓ guardado</div>
+          </div>
+        </div>
+
+        <div class="notes-grid">
+          <div class="notes-main">
+            <div class="block">
+              <h3>Bloc de Notas · Editor Continuo</h3>
+              <div class="editor-wrap">
+                <div class="line-gutter" id="lineGutter" aria-hidden="true">
+                  <div class="gutter-inner" id="gutterInner"></div>
+                </div>
+                <textarea id="mainTextarea" class="main-textarea" spellcheck="false" wrap="off"
+                  placeholder="Escribe tu letra aquí… Enter para nueva línea, pega letras completas, edita sin fricción."></textarea>
+              </div>
+              <div class="editor-actions">
+                <button id="btnDictate" type="button" class="btn btn-ghost" title="Dictar letra por voz (independiente de la grabación)">🗣 Dictar letra</button>
+                <button id="copyLyrics" type="button" class="btn btn-gold" title="Copiar letra al portapapeles">📋 Copiar</button>
+                <button id="btnDownloadLyric" type="button" class="btn btn-ghost" title="Descargar letra en .TXT">⬇ .TXT</button>
+                <button id="btnCoachLetra" type="button" class="btn btn-ghost" title="El Coach (IA) revisa tu letra: rimas internas, sílabas e ideas">🤖 Mejorar con IA</button>
+                <button id="clearLyrics" type="button" class="btn btn-ghost" title="Limpiar todo el bloc">🗑 Limpiar</button>
+              </div>
+              <div id="sttStatus" class="mic-status stt">Dictado voz→texto: <b>inactivo</b></div>
+            </div>
+          </div>
+
+          <aside class="notes-side">
+            <div class="themes-block">
+              <h3>Mis Temas</h3>
+              <div class="themes-row">
+                <select id="themeSelect" class="theme-select">
+                  <option value="">— Borrador libre —</option>
+                </select>
+                <button id="btnNewTheme" type="button" class="btn btn-neon btn-small" title="Nuevo tema">+ Nuevo Tema</button>
+                <button id="btnRenameTheme" type="button" class="btn btn-ghost btn-small" title="Renombrar tema actual">✎ Renombrar</button>
+                <button id="btnDeleteTheme" type="button" class="btn btn-ghost btn-small" title="Borrar tema actual">✕ Borrar</button>
+              </div>
+              <div id="themeLimitMsg" class="theme-limit-msg hidden">
+                ⚠️ Límite de temas alcanzado.
+              </div>
+            </div>
+
+            <div class="block rhyme-block">
+              <h3>Motor de Rimas Fonéticas</h3>
+              <div class="rhyme-type">
+                <label><input type="radio" name="rhymeMode" value="cons" checked> Consonante</label>
+                <label><input type="radio" name="rhymeMode" value="ason"> Asonante</label>
+              </div>
+              <div class="rhyme-info">
+                <span>Línea: <b id="activeLineNum">—</b></span>
+                <span>Palabra: <b id="lastWord">—</b></span>
+                <span>Terminación: <b id="lastEnding">—</b></span>
+              </div>
+              <div class="chips" id="rhymeChips"><span class="hint">Escribe para ver rimas…</span></div>
+              <p class="hint">Rima según la línea donde está el cursor. Clic en una rima para insertarla.</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Pestaña 2: modo entrenamiento (la palabra grande) -->
+      <div class="est-pane hidden" id="est-entrenamiento" role="tabpanel" aria-labelledby="etab-entrenamiento">
+        <div class="stim" id="stim">
+          <p class="stim-label">ESTÍMULO <b id="stimN">01</b> <span>/ DEJA QUE LA PALABRA TE LLEVE</span></p>
+          <div id="stimWord" class="stim-word xl" aria-live="polite">HORIZONTE</div>
+          <p class="stim-hint" id="stimHint">Sin pensarlo tanto. Conviértelo en una barra.</p>
+          <div class="stim-foot">
+            <span class="stim-pairs">rimas: <b id="stimPairs">—</b></span>
+            <button type="button" id="stimNext" class="btn-link">↻ Nueva palabra</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Entrada de voz (REC) -->
+    <section class="panel panel-voz" id="panel-vocal">
+      <header class="panel-head">
+        <h2 class="eyebrow cyan"><span class="num">2</span> Graba · entrada de voz</h2>
+        <span class="mic-name">Micrófono predeterminado</span>
+        <label class="switch">
+          <input type="checkbox" id="liveMonitor" checked>
+          <span class="slider-sw"></span>
+          <span class="sw-label">Escucharme en vivo <b>(Monitoreo)</b></span>
+        </label>
+      </header>
+
+      <div class="rec-deck">
+        <div class="deck-wave">
+          <canvas id="viz" width="520" height="120"></canvas>
+          <div class="pitch-read">
+            <div>Nota: <b id="noteName">—</b></div>
+            <div>Frec: <b id="noteFreq">—</b></div>
+            <div>Grado: <b id="noteScale">—</b></div>
+          </div>
+        </div>
+
+        <div class="deck-rec">
+          <button id="btnRecord" type="button" class="rec-btn" aria-label="Grabar (Alt+R)" title="● Grabar (Alt+R)"><span>REC</span></button>
+          <span class="rec-caption" id="recCaption">GRABAR TOMA</span>
+        </div>
+
+        <div class="deck-info">
+          <div class="rec-time"><i class="rec-dot" aria-hidden="true"></i><b id="recClock">00:00</b></div>
+          <div id="micStatus" class="mic-status">Micrófono: <b>esperando…</b></div>
+          <div id="micNotice" class="mic-notice hidden" role="alert">
+            <p id="micNoticeText"></p>
+            <button type="button" id="micNoticeClose" class="btn btn-ghost btn-small">Entendido</button>
+          </div>
+          <div class="deck-btns" role="group" aria-label="Acciones de la toma">
+            <button id="btnStop" type="button" class="btn btn-ghost" disabled hidden>■ Detener</button>
+            <button id="btnPlayLast" type="button" class="btn btn-ghost" disabled>▶ Escuchar última</button>
+          </div>
+          <details class="more" id="moreVoz">
+          <summary>Más opciones · probar sonido y micrófono, borrar historial</summary>
+          <div class="deck-btns" role="group" aria-label="Más acciones de la cabina">
+            <button id="btnClearAll" type="button" class="btn btn-ghost">🗑 Borrar historial</button>
+            <button type="button" class="btn btn-ghost" data-probar-sonido>🔊 Probar sonido</button>
+          </div>
+          <p class="snd-status" data-snd-status role="status" aria-live="polite"></p>
+          <div class="mic-test" id="micTest">
+            <div class="mic-test-btns">
+              <button type="button" class="btn btn-ghost" id="btnMicTest">🎙 Probar micrófono</button>
+              <button type="button" class="btn btn-ghost" id="btnMicCopy">📋 Copiar diagnóstico</button>
+            </div>
+            <div class="mic-meter" id="micMeterBox" role="meter" aria-label="Nivel del micrófono" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="micLevel"></i></div>
+            <p class="mic-test-msg" id="micTestMsg" role="status" aria-live="polite"></p>
+            <details class="mic-diag" id="micDiagBox"><summary>Datos de diagnóstico</summary><pre id="micDiag">Pulsa "Probar micrófono" para ver los datos.</pre></details>
+          </div>
+          </details>
+        </div>
+      </div>
+      <p class="hint">Pulsa REC para grabar y otra vez para detener (Alt+R). Si hay base MP3/WAV cargada, arranca sola desde la aguja al grabar. Usa audífonos para evitar acople.</p>
+    </section>
+
+    <div class="cabina-lower">
+      <!-- Efectos de voz: presets y cadena -->
+      <section class="panel panel-fx" id="panel-fx">
+        <header class="panel-head"><h2 class="eyebrow magenta"><span class="num">2+</span> Efectos de voz</h2></header>
+
+        <div class="block">
+          <h3>Presets de Estudio</h3>
+          <div class="preset-cards" id="presetCards">
+            <button type="button" class="preset-card" data-preset="trap"><span class="pc-name">Trap Tune</span><span class="pc-desc">Retune 95% · brillante</span></button>
+            <button type="button" class="preset-card" data-preset="calitune"><span class="pc-name">Calitune</span><span class="pc-desc">Retune 65% · cálido</span></button>
+            <button type="button" class="preset-card" data-preset="evolver"><span class="pc-name">Evolver</span><span class="pc-desc">Retune 85% · presencia</span></button>
+            <button type="button" class="preset-card" data-preset="bonny"><span class="pc-name">Bonny</span><span class="pc-desc">Retune 60% · +2 st</span></button>
+            <button type="button" class="preset-card" data-preset="disco"><span class="pc-name">Very Disco</span><span class="pc-desc">Retune 80% · chorus</span></button>
+            <button type="button" class="preset-card" data-preset="raw"><span class="pc-name">Voz Cruda</span><span class="pc-desc">Sin Auto-Tune · limpia</span></button>
+          </div>
+        </div>
+
+        <div class="block">
+          <h3>Cadena de procesamiento</h3>
+          <div class="chain">MIC → HPF 85Hz → EQ → GATE · YIN · PSOLA → CHORUS → COMP → LIMITER</div>
+
+          <div class="row monitor-row">
+            <label class="switch">
+              <input type="checkbox" id="tuneOn">
+              <span class="slider-sw"></span>
+              <span class="sw-label">Afinación automática <b>(Auto-Tune)</b> <b id="tuneOnLbl">OFF</b></span>
+            </label>
+          </div>
+
+          <details class="more" id="moreFx">
+          <summary>Más opciones · ajustes finos de la voz</summary>
+          <div class="fx-grid">
+            <div class="fx-item">
+              <label class="lbl">Velocidad de Afinación (Retune Speed) <span class="val" id="valTune">50%</span></label>
+              <input type="range" id="sTune" min="0" max="100" value="50">
+              <p class="hint hint-tight">0% = natural · 100% = Trap Tune robótico</p>
+            </div>
+            <div class="fx-item">
+              <label class="lbl">Cambio de tono (Pitch shift, semitonos) <span class="val" id="valShift">0 st</span></label>
+              <input type="range" id="sShift" min="-12" max="12" value="0" step="1">
+            </div>
+            <div class="fx-item">
+              <label class="lbl">Escala</label>
+              <select id="scaleSel">
+                <option value="A min">La Menor (A minor)</option>
+                <option value="C maj">Do Mayor (C major)</option>
+                <option value="C min">Do Menor (C minor)</option>
+                <option value="D min">Re Menor (D minor)</option>
+                <option value="E min">Mi Menor (E minor)</option>
+                <option value="F maj">Fa Mayor (F major)</option>
+                <option value="G maj">Sol Mayor (G major)</option>
+                <option value="G min">Sol Menor (G minor)</option>
+              </select>
+            </div>
+            <div class="fx-item">
+              <label class="lbl">Volumen del micrófono (ganancia) <span class="val" id="valMicGain">100%</span></label>
+              <input type="range" id="sMicGain" min="50" max="150" value="100" step="1">
+            </div>
+            <div class="fx-item">
+              <label class="lbl">Eco de sala (reverb) <span class="val" id="valRev">20%</span></label>
+              <input type="range" id="sRev" min="0" max="100" value="20">
+            </div>
+            <div class="fx-item">
+              <label class="lbl">Voz pareja (compresión) <span class="val" id="valCmp">55%</span></label>
+              <input type="range" id="sCmp" min="0" max="100" value="55">
+            </div>
+            <div class="fx-item">
+              <label class="lbl">Lo que te oyes (volumen de monitoreo) <span class="val" id="valMon">80%</span></label>
+              <input type="range" id="sMon" min="0" max="100" value="80">
+            </div>
+          </div>
+
+          <button id="resetKnobs" type="button" class="btn btn-ghost btn-wide">↺ Resetear Perillas</button>
+          </details>
+        </div>
+      </section>
+
+      <!-- Historial de grabaciones -->
+      <section class="panel panel-takes" id="panel-takes">
+        <header class="panel-head"><h2 class="eyebrow orange"><span class="num">2+</span> Tus tomas · historial de grabaciones</h2></header>
+        <div id="takesList" class="takes-list">
+          <p class="take-empty">Sin tomas grabadas. ¡Pulsa "● Grabar" para empezar!</p>
+        </div>
+        <div class="shortcut-bar">
+          <span class="shortcut-title">⌨ Atajos:</span>
+          <span class="shortcut-item"><kbd>Alt</kbd>+<kbd>R</kbd> Grabar/Detener</span>
+          <span class="shortcut-item"><kbd>Alt</kbd>+<kbd>B</kbd> Beat al inicio</span>
+          <span class="shortcut-item"><kbd>Alt</kbd>+<kbd>M</kbd> Reproducir mezcla</span>
+        </div>
+      </section>
+    </div>
+    <!-- Línea de tiempo (el reproductor y la mezcla). Es UNA sola: en el modo Beats se muestra en su propia ranura (cabina.js la mueve) -->
+    <div id="slotTlCabina">
+    <section class="panel panel-timeline" id="panel-timeline">
+      <header class="panel-head">
+        <h2 class="eyebrow"><span class="num" id="tlNum">3</span> <span id="tlTitle">Escucha y descarga · mezcla</span></h2>
+      </header>
+      <div class="tl-transport">
+        <button id="mixPlay" type="button" class="btn btn-neon">▶ Reproducir Mezcla (Base + Voz)</button>
+        <button id="mixStop" type="button" class="btn btn-ghost">■ Parar</button>
+        <button id="mixExport" type="button" class="btn btn-gold">↓ Exportar Mezcla Final (.WAV)</button>
+        <button id="mixExportVoice" type="button" class="btn btn-ghost hidden">↓ Exportar solo mi voz</button>
+        <span class="tl-time"><b id="tlTime">0:00.0</b> / <span id="tlDur">0:00.0</span></span>
+      </div>
+      <div id="tlNotice" class="tl-notice hidden"></div>
+      <div id="tlYtExportNote" class="tl-notice tl-ytnote hidden" role="note"><b>El audio de YouTube no se puede incluir en el archivo.</b> Para exportar tu voz con beat, usa un beat de FlowLab (tarjeta 03) o sube tu MP3/WAV.</div>
+      <div id="tlYtNote" class="tl-notice tl-ytnote hidden" role="note"><b>Sobre YouTube:</b> el navegador no deja mezclar ni exportar el audio de un video de YouTube. Aquí solo se escucha en conjunto con tu beat y tu voz, con sincronía aproximada. Para mezclar y exportar, sube un MP3/WAV propio (tarjeta 02).</div>
+      <div class="tl-body">
+        <div class="tl-heads">
+          <div class="tl-ruler-head">TIEMPO</div>
+          <div class="tl-head">
+            <div class="tl-name">PISTA 1 · BASE <span id="tlBaseSrc" class="tl-src">—</span></div>
+            <div class="tl-ctrls">
+              <button id="baseMute" type="button" class="btn btn-ghost btn-small mute-btn" title="Silenciar la base" aria-label="Silenciar la base">M</button>
+              <button id="baseSolo" type="button" class="btn btn-ghost btn-small mute-btn solo-btn" title="Solo la base" aria-label="Escuchar solo la base">S</button>
+              <input type="range" id="baseVol" min="0" max="100" value="85" title="Volumen base" aria-label="Volumen de la base">
+            </div>
+          </div>
+          <div class="tl-head hidden" id="tlHeadBeat">
+            <div class="tl-name">MI BEAT <span class="tl-src">patrón · bucle</span></div>
+            <div class="tl-ctrls">
+              <button id="beatMute" type="button" class="btn btn-ghost btn-small mute-btn" title="Silenciar mi beat" aria-label="Silenciar mi beat">M</button>
+              <button id="beatSolo" type="button" class="btn btn-ghost btn-small mute-btn solo-btn" title="Solo mi beat" aria-label="Escuchar solo mi beat">S</button>
+              <input type="range" id="beatVol" min="0" max="100" value="80" title="Volumen de mi beat" aria-label="Volumen de mi beat">
+            </div>
+          </div>
+          <div class="tl-head">
+            <div class="tl-name">PISTA 2 · VOZ <span id="tlVoiceSrc" class="tl-src">—</span></div>
+            <div class="tl-ctrls">
+              <button id="voiceMute" type="button" class="btn btn-ghost btn-small mute-btn" title="Silenciar la voz" aria-label="Silenciar la voz">M</button>
+              <button id="voiceSolo" type="button" class="btn btn-ghost btn-small mute-btn solo-btn" title="Solo la voz" aria-label="Escuchar solo la voz">S</button>
+              <input type="range" id="voiceVol" min="0" max="100" value="90" title="Volumen voz" aria-label="Volumen de la voz">
+            </div>
+          </div>
+        </div>
+        <canvas id="tlCanvas" class="tl-canvas" height="160"></canvas>
+      </div>
+      <div class="tl-sync">
+        <label class="lbl">Sincronizar Voz (ms) <span class="val" id="valSync">0 ms</span></label>
+        <input type="range" id="syncMs" min="-300" max="300" value="0" step="1">
+      </div>
+      <div class="tl-edit hidden" id="tlEdit">
+        <h3 id="tlEditTitle">Editar mi archivo (la base)</h3>
+        <div class="tl-edit-grid">
+          <div>
+            <label class="lbl" for="baseShift">Desplazar <span class="val" id="valBaseShift">0 ms</span></label>
+            <input type="range" id="baseShift" min="-300" max="300" value="0" step="1">
+          </div>
+          <div>
+            <label class="lbl" for="trimS">Inicio (s)</label>
+            <input type="number" id="trimS" min="0" step="0.1" value="0" inputmode="decimal">
+          </div>
+          <div>
+            <label class="lbl" for="trimE">Fin (s)</label>
+            <input type="number" id="trimE" min="0" step="0.1" value="0" inputmode="decimal">
+          </div>
+          <label class="chk tl-loop"><input type="checkbox" id="baseLoopChk"> Repetir (bucle)</label>
+          <button type="button" class="btn btn-ghost btn-small" id="baseReset">↺ Restaurar</button>
+        </div>
+        <p class="hint">También puedes recortar arrastrando los bordes (las pestañas) de la onda de la base. El volumen, M (silenciar) y S (solo) están en la pista.</p>
+      </div>
+      <p class="hint">Clic en la regla o en las pistas para mover la aguja. La toma activa se coloca en el segundo exacto del beat donde empezó.</p>
+    </section>
+    </div>
+
+  </div>
+
+  <!-- ============ MODO BEATS · Creador de beats (Mejoras 3 · Parte 2) ============ -->
+  <div class="mode-pane hidden" id="mode-beats" data-mode="beats" role="tabpanel" aria-labelledby="tab-beats">
+    <div class="audio-banner" data-audio-banner role="status" aria-live="polite">
+      <span>🔊 <b>Toca para activar el sonido.</b> Si no oyes nada: quita el <b>modo silencio</b> del celular (interruptor al costado) y sube el volumen.</span>
+    </div>
+    <section class="panel panel-beats" id="panel-beats">
+      <div class="bt-head">
+        <div>
+          <p class="eyebrow orange">Beat Lab</p>
+          <h2 class="beats-title">Arma. Prueba. Refina.</h2>
+        </div>
+        <p class="bt-sub">Todo suena desde tu navegador: sin descargas y sin internet.</p>
+      </div>
+
+      <!-- Ritmos listos por género (Mejoras 5 · C): presets.js se carga al entrar a este modo -->
+      <div class="bt-presets" id="btPresets">
+        <h3 id="btGenresTitle">Elige un ritmo y cámbialo a tu gusto</h3>
+        <div class="bt-genres" id="btGenres" role="group" aria-labelledby="btGenresTitle"></div>
+        <p class="bt-gtag" id="btGenreTag"></p>
+        <div class="bt-cards" id="btCards" aria-live="polite"><p class="hint">Cargando ritmos…</p></div>
+      </div>
+
+      <!-- Transporte -->
+      <div class="bt-transport" role="group" aria-label="Transporte del beat">
+        <button type="button" class="bt-play" id="btPlay" aria-label="Reproducir el beat" aria-pressed="false"><span class="bt-play-ico" aria-hidden="true"></span></button>
+        <div class="bt-field bt-name">
+          <label class="lbl" for="btName">Patrón</label>
+          <input type="text" id="btName" maxlength="40" value="Mi primer beat" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="bt-field bt-tempo">
+          <span class="lbl" id="btTempoLbl">Velocidad (BPM)</span>
+          <div class="bt-stepper" role="group" aria-labelledby="btTempoLbl">
+            <button type="button" class="bt-pm" id="btTempoDown" aria-label="Bajar tempo">−</button>
+            <input type="number" id="btTempo" min="60" max="180" step="1" value="95" inputmode="numeric" aria-label="Tempo en BPM">
+            <button type="button" class="bt-pm" id="btTempoUp" aria-label="Subir tempo">+</button>
+          </div>
+        </div>
+        <div class="bt-field bt-swing">
+          <label class="lbl" for="btSwing">Swing (ritmo balanceado) <span class="val" id="btSwingVal">0%</span></label>
+          <input type="range" id="btSwing" min="0" max="70" step="1" value="0">
+        </div>
+        <div class="bt-field bt-kit">
+          <label class="lbl" for="btKit">Kit de sonidos</label>
+          <select id="btKit"></select>
+        </div>
+        <div class="bt-field bt-len">
+          <span class="lbl" id="btLenLbl">Pasos (16 o 32)</span>
+          <div class="bt-seg" role="group" aria-labelledby="btLenLbl">
+            <button type="button" class="on" id="btLen16" data-len="16" aria-pressed="true">16</button>
+            <button type="button" id="btLen32" data-len="32" aria-pressed="false">32</button>
+          </div>
+        </div>
+      </div>
+      <div class="bt-actions">
+        <button type="button" class="btn btn-ghost" id="btClear">🧹 Limpiar</button>
+        <button type="button" class="btn btn-ghost" id="btRandom">🎲 Sorpréndeme</button>
+        <button type="button" class="btn btn-neon" id="btSave">💾 Guardar</button>
+        <button type="button" class="btn btn-ghost" data-mode-go="cabina">← Volver a la Cabina</button>
+        <span class="bt-status" id="btStatus" role="status" aria-live="polite"></span>
+      </div>
+
+      <details class="more" id="moreBeatsKit">
+      <summary>Más opciones · escuchar el kit, probar sonido, modo celular</summary>
+      <div class="bt-kit-row">
+        <p class="bt-kit-desc" id="btKitDesc"></p>
+        <button type="button" class="btn btn-ghost btn-small" id="btKitListen">▶ Escuchar kit</button>
+      </div>
+      <div class="bt-actions">
+        <button type="button" class="btn btn-ghost" data-probar-sonido>🔊 Probar sonido</button>
+        <label class="switch bt-cel" title="Para parlantes de celular, que casi no reproducen graves">
+          <input type="checkbox" id="btCel">
+          <span class="slider-sw"></span>
+          <span class="sw-label">Modo celular <b>(realza graves)</b></span>
+        </label>
+        <p class="snd-status" data-snd-status role="status" aria-live="polite"></p>
+      </div>
+      </details>
+
+      <div class="bt-main">
+        <div class="bt-pads-col">
+          <h3 id="btPadsTitle">1 · Toca los pads</h3>
+          <p class="hint bt-keys-hint">Con el mouse, con el dedo o con el teclado: <kbd>Q</kbd> <kbd>W</kbd> <kbd>E</kbd> <kbd>R</kbd> / <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> <kbd>F</kbd>. Al aire, sin miedo.</p>
+          <div class="bt-pads" id="btPads" role="group" aria-labelledby="btPadsTitle"></div>
+        </div>
+        <details class="bt-fx more" id="moreFxBeats">
+          <summary id="btFxTitle">Más opciones · Dale sabor (vinilo, filtro, saturación)</summary>
+          <p class="hint">Mueve los deslizadores y escucha cómo cambia.</p>
+          <label class="lbl" for="btFxVinyl">Vinilo <span class="val" id="btFxVinylVal">0%</span></label>
+          <input type="range" id="btFxVinyl" min="0" max="100" step="1" value="0">
+          <label class="lbl" for="btFxFilter">Filtro <span class="val" id="btFxFilterVal">0%</span></label>
+          <input type="range" id="btFxFilter" min="0" max="100" step="1" value="0">
+          <label class="lbl" for="btFxSat">Saturación <span class="val" id="btFxSatVal">0%</span></label>
+          <input type="range" id="btFxSat" min="0" max="100" step="1" value="0">
+        </details>
+      </div>
+
+      <div class="bt-seq-block">
+        <div class="bt-seq-head">
+          <h3 id="btSeqTitle">2 · Construye tu patrón</h3>
+          <div class="bt-add-wrap">
+            <button type="button" class="btn btn-ghost btn-small" id="btAddInst" aria-haspopup="true" aria-expanded="false">+ Añadir instrumento</button>
+            <div class="bt-add-menu hidden" id="btAddMenu" role="menu" aria-label="Instrumentos que puedes añadir"></div>
+          </div>
+        </div>
+        <p class="hint">Toca un paso para encenderlo o apagarlo. Mantén pulsado (o clic derecho) para cambiar la fuerza del golpe. En bajo y sample, <b>♪</b> te deja elegir la nota de cada paso.</p>
+        <p class="bt-scroll-hint" aria-hidden="true">↔ Desliza el patrón para ver todos los pasos</p>
+        <div class="bt-seq-scroll" id="btSeqScroll"><div class="bt-seq" id="btSeq" role="group" aria-labelledby="btSeqTitle"></div></div>
+      </div>
+
+      <div class="bt-track-block">
+        <h3 id="btTrackTitle">3 · Tu pista · usa o descarga tu beat</h3>
+        <p class="hint">Así se ve tu beat en el tiempo. Cada capa es un instrumento: quítala con ✕, silénciala con M o añade otra con los botones "+". El beat se actualiza al instante.</p>
+        <div class="bt-track" id="btTrack">
+          <div class="bt-wave-row"><span class="bt-wave-lab">Beat</span><canvas id="btWave" height="84" role="img" aria-label="Forma de onda de tu beat"></canvas></div>
+          <div class="bt-lanes" id="btLanes"></div>
+          <div class="bt-playhead" aria-hidden="true"></div>
+        </div>
+        <details class="more" id="moreChips">
+        <summary>Más opciones · añadir capas con un toque</summary>
+        <div class="bt-chips" id="btChips" aria-label="Capas que puedes añadir"></div>
+        </details>
+        <div class="bt-export">
+          <div class="bt-field">
+            <label class="lbl" for="btBars">Largo del beat</label>
+            <select id="btBars"><option value="4">4 compases</option><option value="8" selected>8 compases</option><option value="16">16 compases</option></select>
+          </div>
+          <button type="button" class="btn btn-neon" id="btUse">🎤 Usar en la cabina</button>
+          <button type="button" class="btn btn-ghost" id="btWav">⬇ Descargar mi beat (.WAV)</button>
+        </div>
+        <p class="bt-export-msg" id="btExportMsg" role="status" aria-live="polite"></p>
+      </div>
+
+      <div id="slotTlBeats" class="bt-tl-slot"></div>
+
+      <details class="bt-mine more" id="moreMine">
+        <summary id="btMineTitle">Más opciones · Mis beats guardados</summary>
+        <p class="hint" id="btMineEmpty">Aún no guardaste ninguno. Arma un patrón y pulsa <b>Guardar</b>: se queda en este navegador.</p>
+        <ul class="bt-mine-list" id="btMine" aria-labelledby="btMineTitle"></ul>
+      </details>
+
+      <button type="button" class="bt-fab" id="btFab" aria-label="Reproducir el beat" aria-pressed="false"><span class="bt-play-ico" aria-hidden="true"></span></button>
+      <p class="bt-foot"><b>No necesitas teoría, necesitas ganas.</b> <span>Empieza con bombo y caja. Lo demás llega solo.</span></p>
+    </section>
+  </div>
+
+  <!-- ============ MODO ESCUELA ============ -->
+  <div class="mode-pane hidden" id="mode-escuela" data-mode="escuela" role="tabpanel" aria-labelledby="tab-escuela">
+    <section class="panel panel-school">
+      <div class="block school" id="school">
+        <div class="school-head">
+          <h3>Escuela de Freestyle</h3>
+          <div class="rank-chip"><span id="rankName">Novato</span> · <b id="rankXp">0 XP</b> · 🔥<span id="streakNow">0</span></div>
+        </div>
+        <div class="xp-bar"><div id="xpFill"></div></div>
+        <div class="xp-meta" id="xpMeta">0 / 100 XP para Aprendiz</div>
+        <div class="school-tabs" role="tablist">
+          <button type="button" class="tab on" data-tab="play">🎮 Juegos</button>
+          <button type="button" class="tab" data-tab="progress">📈 Mi progreso</button>
+        </div>
+
+        <div class="tab-pane" data-pane="play">
+          <div class="school-cols">
+            <div class="school-left">
+              <div class="start-here hidden" id="startHere">
+                <p class="sh-title">👋 Empieza aquí</p>
+                <ol>
+                  <li>Pulsa <b>Preparar</b>: deja listo <b>Univocal · fácil</b> por 1 minuto.</li>
+                  <li>Pulsa <b>▶ Empezar</b>: suena un beat y el juego te da una vocal.</li>
+                  <li>Rima una palabra por barra. Al final ves tus puntos y tu rango.</li>
+                </ol>
+                <div class="row">
+                  <button type="button" id="startHereGo" class="btn btn-neon btn-small">Preparar Univocal fácil</button>
+                  <button type="button" id="startHereHide" class="btn btn-ghost btn-small">Ya sé cómo se juega</button>
+                </div>
+              </div>
+              <div class="beat-pick" id="beatPick" role="group" aria-labelledby="beatPickT">
+                <p class="bp-title" id="beatPickT">Elige tu beat</p>
+                <div class="bp-opts">
+                  <button type="button" class="bp-opt on" data-bp="flowlab" aria-pressed="true">🎲 Beat de FlowLab <small>aleatorio · listo para jugar</small></button>
+                  <button type="button" class="bp-opt" data-bp="yt" aria-pressed="false">▶ Mi link de YouTube <small>lo pegas en la base de arriba</small></button>
+                  <button type="button" class="bp-opt" data-bp="mp3" aria-pressed="false">📁 Mi MP3 / WAV <small>se queda en tu equipo</small></button>
+                </div>
+                <p class="hint bp-now" id="beatPickNow" role="status" aria-live="polite"></p>
+              </div>
+              <div class="mission" id="mission"></div>
+              <div class="game-grid" id="gameGrid"></div>
+              <div class="game-info" id="gameInfo"></div>
+
+              <div class="school-config">
+                <div class="cfg cfg-bpm">
+                  <label class="lbl" for="bpmInput">Velocidad del beat (BPM)</label>
+                  <div class="bpm-row">
+                    <input type="number" id="bpmInput" min="60" max="200" step="1" value="90">
+                    <button type="button" id="tapBtn" class="btn btn-ghost btn-small" title="Golpea al ritmo de la base (mínimo 3 veces)">TAP</button>
+                    <button type="button" id="bpmHalf" class="btn btn-ghost btn-small bpm-x" title="Mitad de tempo">½</button>
+                    <button type="button" id="bpmDouble" class="btn btn-ghost btn-small bpm-x" title="Doble tempo">×2</button>
+                    <button type="button" id="bpmDetect" class="btn btn-ghost btn-small" title="Detectar el BPM de tu base MP3/WAV">🔍 Base</button>
+                  </div>
+                  <p class="tap-help" id="tapHelp" role="status" aria-live="polite"></p>
+                </div>
+                <div class="cfg">
+                  <label class="lbl" for="diffSel">Dificultad</label>
+                  <select id="diffSel"><option value="facil">Fácil</option><option value="medio">Medio</option><option value="dificil">Difícil</option></select>
+                </div>
+                <div class="cfg">
+                  <label class="lbl" for="gameBeat">Beat del juego</label>
+                  <select id="gameBeat">
+                    <option value="random">🎲 Aleatorio</option>
+                    <optgroup label="Elegir género">
+                      <option value="trap">Trap</option><option value="reggaeton">Reggaetón</option><option value="rap">Rap</option><option value="hiphop">Hip hop</option><option value="drill">Drill</option>
+                    </optgroup>
+                    <option value="none">Sin beat (solo metrónomo)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div id="emotionPicker" class="vowel-picker hidden" role="group" aria-labelledby="emotionLbl">
+                <span class="lbl" id="emotionLbl">¿Qué sientes hoy?</span>
+                <div class="vowels" id="emotionBtns"></div>
+                <button type="button" id="btnCoachDesa" class="btn btn-ghost btn-small" title="El Coach (IA) te da 5 palabras, 3 imágenes y un arranque de verso">🤖 Desahógate con IA</button>
+              </div>
+              <div id="vowelPicker" class="vowel-picker hidden">
+                <span class="lbl">Vocal forzada</span>
+                <div class="vowels">
+                  <button type="button" class="vowel-btn" data-v="a">A</button>
+                  <button type="button" class="vowel-btn" data-v="e">E</button>
+                  <button type="button" class="vowel-btn" data-v="i">I</button>
+                  <button type="button" class="vowel-btn" data-v="o">O</button>
+                  <button type="button" class="vowel-btn" data-v="u">U</button>
+                  <button type="button" class="vowel-btn" data-v="*" title="Cambia de vocal en cada consigna">🎲</button>
+                </div>
+              </div>
+
+
+              <div class="cfg-voice">
+                <label class="chk" title="Usa el reconocimiento de voz del navegador para comprobar si metiste las palabras"><input type="checkbox" id="voiceCheck"> 🎙 Verificar con mi voz (beta)</label>
+              </div>
+              <p class="voice-note hidden" id="voiceNote" role="note">🎧 <b>Usa audífonos:</b> el reconocimiento de voz entiende mucho mejor si no oye el beat. Con beat de fondo, su volumen baja solo mientras te escucha. Una ronda verificada por voz da el XP completo; la de autoevaluación da el 40 % y queda "sin verificar".</p>
+              <details class="more" id="moreEscuela">
+              <summary>Más opciones · duración, cambio de consigna, volumen del beat, metrónomo</summary>
+              <div class="school-config">
+                <div class="cfg">
+                  <label class="lbl" for="everySel">Cambio cada</label>
+                  <select id="everySel"><option value="auto">Auto</option><option value="1">1 compás</option><option value="2">2 compases</option><option value="4">4 compases</option><option value="8">8 compases</option></select>
+                </div>
+                <div class="cfg">
+                  <label class="lbl" for="durSel">Duración</label>
+                  <select id="durSel"><option value="60">1 min</option><option value="120">2 min</option><option value="180">3 min</option><option value="300">5 min</option><option value="0">Libre</option></select>
+                </div>
+                <div class="cfg">
+                  <label class="lbl" for="gameBeatVol">Volumen del beat</label>
+                  <input type="range" id="gameBeatVol" min="0" max="100" step="1" value="80" aria-label="Volumen del beat del juego">
+                </div>
+              </div>
+              <div class="cfg-checks">
+                <label class="chk"><input type="checkbox" id="metronome" checked> Metrónomo</label>
+                <label class="chk"><input type="checkbox" id="withBase"> Arrancar con la base</label>
+                <label class="chk"><input type="checkbox" id="showNext" checked> Ver siguiente</label>
+              </div>
+              </details>
+              <div class="row">
+                <button type="button" id="gymStart" class="btn btn-neon">▶ Empezar</button>
+                <button type="button" id="gymStop" class="btn btn-ghost" disabled>■ Terminar</button>
+                <button type="button" id="stageFull" class="btn btn-ghost btn-small stage-full" title="Pantalla completa">⛶</button>
+              </div>
+            </div>
+
+            <div class="school-right">
+              <div class="gym-stage" id="gymStage">
+                <div class="stage-top"><span id="stageGame">—</span><span id="stageTimer">0:00</span></div>
+                <div id="gymMain" class="gym-main">ELIGE UN JUEGO</div>
+                <div id="gymSub" class="gym-sub">y pulsa Empezar</div>
+                <div id="gymNext" class="gym-next"></div>
+                <div id="barSlots" class="bar-slots" aria-label="Barras del 4x4"></div>
+                <div id="gymFeedback" class="gym-feedback"></div>
+                <div class="relampago hidden" id="relampago">
+                  <div class="rl-row">
+                    <input id="rlInput" type="text" placeholder="Escribe una rima y pulsa Enter…" autocomplete="off" maxlength="24" spellcheck="false">
+                    <button type="button" id="rlSkip" class="btn btn-ghost btn-small">⟳ Otra</button>
+                  </div>
+                  <div id="rlFound" class="rl-found"></div>
+                </div>
+                <div class="rate hidden" id="ratePanel">
+                  <button type="button" class="btn btn-neon btn-small" data-acc="1">Todas</button>
+                  <button type="button" class="btn btn-gold btn-small" data-acc="0.75">Casi todas</button>
+                  <button type="button" class="btn btn-ghost btn-small" data-acc="0.5">La mitad</button>
+                  <button type="button" class="btn btn-ghost btn-small" data-acc="0.25">Pocas</button>
+                </div>
+                <div class="stage-bar"><div id="stageBarFill"></div></div>
+              </div>
+              <div class="beat-dots" id="beatDots"><span></span><span></span><span></span><span></span></div>
+              <div class="gym-meta">Compás <b id="barCount">0</b> · Tiempo <b id="beatCount">0</b> · <span id="gymBpmLabel">90 BPM</span> · Consignas <b id="promptCount">0</b> <span id="voiceMeter"></span></div>
+              <div class="beat-now" id="beatNowRow">
+                <span id="beatNow" role="status" aria-live="polite">Beat: se elige al empezar</span>
+                <button type="button" id="beatNext" class="btn btn-ghost btn-small">🔀 Otro beat</button>
+              </div>
+              <div id="sessionResult" class="session-result hidden"></div>
+              <p class="hint">Funciona con cualquier base: elige el BPM, usa TAP sobre la de YouTube o 🔍 para detectarlo de tu MP3. Esc = terminar.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane hidden" data-pane="progress">
+          <div class="stat-grid" id="statGrid"></div>
+          <h4 class="sub-h">Últimos 14 días (minutos)</h4>
+          <div class="day-bars" id="dayBars"></div>
+          <h4 class="sub-h">Mejores puntajes</h4>
+          <div class="bests" id="bests"></div>
+          <h4 class="sub-h">Historial</h4>
+          <div class="history" id="historyList"></div>
+          <div class="progress-actions">
+            <button type="button" id="exportProg" class="btn btn-ghost btn-small">⬇ Exportar</button>
+            <label class="btn btn-ghost btn-small" for="importProg">⬆ Importar</label>
+            <input type="file" id="importProg" accept=".json,application/json" hidden>
+            <label class="chk"><input type="checkbox" id="unlockAll"> Desbloquear todo</label>
+            <button type="button" id="resetProg" class="btn btn-danger btn-small">Reiniciar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <span>© 2026 FlowLab Studio</span>
+  <nav aria-label="Enlaces del pie"><a href="privacidad.html">Privacidad</a></nav>
+</footer>
+
+<script src="freestyle-data.js"></script>
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+<script src="freestyle-school.js"></script>
+<script src="cabina.js"></script>
+<script src="beats.js"></script>
+<div id="updateBar" class="update-bar hidden" role="status" aria-live="polite"><span class="ub-msg">Hay una versión nueva de FlowLab.</span> <button type="button" class="btn btn-neon btn-small" data-update-go>Actualizar</button> <button type="button" class="btn btn-ghost btn-small" data-update-later aria-label="Ahora no">Después</button></div>
+<script src="help.js"></script>
+<script src="glosario.js"></script>
+<script type="module" src="ai-coach.js"></script>
+<script src="pwa.js"></script>
+</body>
+</html>
