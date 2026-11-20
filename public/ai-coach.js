@@ -226,7 +226,8 @@ async function pedirIA(cual, prompt, onEstado) {
   } catch (e) { }
   const res = await conTiempo(modelo.generateContent(prompt), LIM.esperaMs);
   const texto = res.response.text();
-  return { texto, fuente: res.response.inferenceSource || '' };
+  // El SDK devuelve 'on_device' / 'in_cloud' (minúsculas): se normaliza para que el aviso "dónde se ejecutó" siempre salga.
+  return { texto, fuente: String(res.response.inferenceSource || '').toUpperCase() };
 }
 
 /* ---------- limpieza de lo que devuelve la IA ---------- */
