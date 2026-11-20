@@ -26,7 +26,7 @@ const FIREBASE_CONFIG = {
 };
 // Clave de sitio de reCAPTCHA Enterprise (tipo web, por puntaje). Se crea en la consola de Google Cloud y se pega aquí.
 // Es pública. Mientras esté vacía, el Coach solo funciona en localhost (con token de depuración).
-const RECAPTCHA_KEY = '';
+const RECAPTCHA_KEY = '6LeggSkuAAAAAKNgQCIpjtK8YrcxNaTiqTly0eF3';
 
 // Modelo de la nube (el que la documentación de Firebase da por defecto desde el SDK 13). Hay que indicarlo porque al pasar inCloudParams se pierde el valor por defecto.
 const CLOUD_MODEL = 'gemini-3.5-flash-lite';
