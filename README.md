@@ -5,7 +5,7 @@
 FlowLab is plain HTML/CSS/JS (no framework, no bundler, no build step). It lets you write lyrics, record your voice over a beat with real-time effects, build your own beats, and train freestyle with 18 short games. The **AI Coach** is built with **Firebase AI Logic (Hybrid Inference)**: it prefers **Gemini Nano on-device in desktop Chrome** and falls back to a **Gemini model in the cloud** when no local model is available.
 
 > Built for the **#BuildHybridAI** challenge (Google · Firebase · Devpost).
-> Live demo (hosted): https://flowlab-studio.pages.dev
+> Live demo (hosted): https://flowlab-open.pages.dev
 
 ## Why it matters
 

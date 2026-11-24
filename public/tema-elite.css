@@ -1,0 +1,110 @@
+/* FlowLab · tema "élite" (boceto aprobado 21/11/2026). Solo cambia la apariencia; las funciones no se tocan. */
+body{background:radial-gradient(1200px 520px at 72% -10%,#1d1233 0,transparent 60%),#0B0B0F}
+/* Cabecera: una sola fila ordenada */
+.topbar{grid-template-columns:auto minmax(0,1fr) auto auto;gap:16px;padding:12px 20px;background:rgba(20,20,27,.88);backdrop-filter:blur(10px);position:sticky;top:8px;z-index:20;border-radius:20px}
+.mode-now{display:none}
+.brand h1{font-size:21px;letter-spacing:-.02em}
+.modes{justify-self:end;border-radius:999px;padding:4px;background:#14141B}
+.mode-tab{border-radius:999px;padding:11px 22px;font-size:14px;letter-spacing:.04em}
+.mode-tab i{font-size:12px;opacity:.8}
+.status-strip{flex-wrap:nowrap;gap:8px;text-transform:none;letter-spacing:0;font-size:13px}
+.status-strip .glos-btn,.status-strip .install-btn,.lang-sel{border-radius:999px;padding:9px 14px;font-size:14px;font-weight:700}
+.status-text{white-space:nowrap;font:700 13px ui-monospace,monospace}
+/* Pasos */
+.step-title{font-size:26px;letter-spacing:-.02em;gap:6px 14px;margin:6px 0 14px}
+.step-title .num{font:900 15px ui-monospace,monospace;color:#000;background:var(--lime);border-radius:8px;padding:3px 9px}
+.step-title small{font-size:15px;color:var(--muted)}
+/* Elige la base: tarjetas compactas con texto grande */
+.base-cards{gap:12px;align-items:stretch}
+.base-card,.drop-zone{min-height:0}
+.base-card{padding:16px 18px;border-radius:16px;transition:transform .2s,border-color .2s}
+.base-card:hover{transform:translateY(-3px)}
+.bc-head{font-size:15px;letter-spacing:.06em}
+.bc-head b{font-size:16px}
+.dz-text{font-size:14px;line-height:1.35}
+.bc-yt .bc-body{margin-top:10px}
+.bc-body input{font-size:15px;padding:11px 14px}
+.bc-house-btn{border-radius:14px;font-size:15px}
+.bc-stack{gap:10px}
+/* Tarjetas y botones en general: más legibles */
+.btn{font-size:15px}
+.panel-head h2,.eyebrow{font-size:14px}
+@media (max-width:1100px){.topbar{grid-template-columns:1fr;position:static}.modes{justify-self:start;overflow:auto;max-width:100%}.status-strip{flex-wrap:wrap}}
+.status-strip .lang-sel{width:auto;flex:0 0 auto;min-width:0;max-width:150px}
+/* Letras más grandes y menos espacios muertos */
+.app{zoom:1.1;gap:12px}
+.hint,.dz-text,.bc-body,small,.help-q{font-size:max(13px,1em)}
+.panel-head{margin-bottom:8px}
+.block,.panel,section.block{padding-top:14px;padding-bottom:14px}
+.base-bar .hint,.base-bar small{margin:4px 0}
+@media (max-width:900px){.app{zoom:1}}
+/* Portada con imagen (Google Flow) */
+.hero-strip{position:relative;min-height:190px;border-radius:20px;overflow:hidden;display:flex;align-items:flex-end;background:#0B0B0F url(assets/img/hero.webp) center 30%/cover no-repeat;border:1px solid var(--line)}
+.hero-strip:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,11,15,.92) 0,rgba(11,11,15,.35) 60%,transparent)}
+.hero-txt{position:relative;padding:22px 26px;max-width:620px}
+.hero-txt h2{margin:0 0 4px;font-size:34px;letter-spacing:-.03em;color:var(--lime)}
+.hero-txt p{margin:0;font-size:17px;color:#e9e9f2}
+@media (prefers-reduced-motion:no-preference){.hero-strip{animation:heroPan 24s ease-in-out infinite alternate;background-size:112%}}
+@keyframes heroPan{from{background-position:30% 30%}to{background-position:70% 40%}}
+/* Portadas por género (Google Flow) */
+.bt-gchip[data-genero=trap]{background:linear-gradient(90deg,rgba(11,11,15,.85),rgba(11,11,15,.4)),url(assets/img/genre-trap.webp) center/cover}
+.bt-gchip[data-genero=rap]{background:linear-gradient(90deg,rgba(11,11,15,.85),rgba(11,11,15,.4)),url(assets/img/genre-boombap.webp) center/cover}
+.bt-gchip[data-genero=reggaeton]{background:linear-gradient(90deg,rgba(11,11,15,.85),rgba(11,11,15,.4)),url(assets/img/genre-reggaeton.webp) center/cover}
+.bt-gchip{min-height:48px;font-size:15px;font-weight:800}
+.bt-gchip[data-genero]{background-color:#14141B;color:#fff}
+.bt-gchip[aria-pressed=true][data-genero]{background:var(--lime);color:#000}
+.hero-beats{background-image:url(assets/img/genre-boombap.webp);min-height:150px}
+.hero-escuela{background-image:url(assets/img/hero-2.webp);min-height:150px}
+/* Modo Graffiti */
+body{position:relative}
+.graf-canvas{position:absolute;left:0;top:0;z-index:60;pointer-events:none;touch-action:none}
+body.graf-on .graf-canvas{cursor:crosshair}
+.graf-bar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:90;display:flex;align-items:center;flex-wrap:wrap;justify-content:center;gap:8px;max-width:calc(100vw - 24px);padding:10px 14px;border:1px solid var(--lime);border-radius:18px;background:rgba(20,20,27,.96);box-shadow:0 10px 36px rgba(0,0,0,.65);color:#f4f4f8}
+.graf-bar[hidden]{display:none}
+.graf-b{border:1px solid #3a3a4a;background:#1b1b25;color:#f4f4f8;border-radius:12px;padding:9px 13px;font:700 14px inherit;font-family:inherit;cursor:pointer}
+.graf-b:hover,.graf-b:focus-visible{border-color:var(--lime);outline:none}
+.graf-tool[aria-pressed=true]{background:var(--lime);color:#000;border-color:var(--lime)}
+.graf-exit{background:#E01A17;border-color:#E01A17;color:#fff}
+.graf-bar input[type=color]{width:40px;height:38px;border:0;border-radius:10px;background:none;padding:0;cursor:pointer}
+.graf-bar input[type=range]{width:110px}
+.graf-chk{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700}
+.graf-status{flex-basis:100%;text-align:center;font-size:12px;color:#a8a8bc}
+body.graf-on{user-select:none}
+/* Tema claro (opcional, cada persona) */
+html[data-tema=claro]{--bg:#F3F3F8;--surface:#FFFFFF;--surface-2:#ECECF3;--surface-3:#E1E1EA;--violet:#EDE7F7;--violet-2:#E6E4F7;--line:#D3D3DF;--line-2:#BDBDCC;--txt:#14141B;--muted:#55556A}
+html[data-tema=claro] body{background:#F3F3F8;color:#14141B}
+html[data-tema=claro] .topbar{background:rgba(255,255,255,.9)}
+html[data-tema=claro] .modes{background:#ECECF3}
+/* Opinión */
+.fb-faces{display:flex;gap:8px;flex-wrap:wrap}
+.fb-face{border:1px solid var(--line-2);background:var(--surface-2);color:var(--txt);border-radius:12px;padding:10px 14px;font:700 15px inherit;font-family:inherit;cursor:pointer}
+.fb-face[aria-pressed=true]{background:var(--lime);color:#000;border-color:var(--lime)}
+.fb-text{width:100%;border-radius:12px;border:1px solid var(--line-2);background:var(--surface-2);color:var(--txt);font:16px inherit;font-family:inherit;padding:12px;resize:vertical}
+a.btn{text-decoration:none;display:inline-flex;align-items:center}
+/* IA en la Escuela */
+.gym-stage{position:relative}
+.eia-btn{position:absolute;right:16px;top:44px;z-index:5;border:0;border-radius:10px;background:var(--lime);color:#000;padding:7px 14px;font:900 15px inherit;font-family:inherit;cursor:pointer;box-shadow:0 0 18px rgba(222,252,7,.35)}
+.eia-btn:hover,.eia-btn:focus-visible{filter:brightness(1.1);outline:2px solid #fff}
+.eia-panel{position:absolute;right:16px;top:86px;z-index:6;width:min(320px,calc(100% - 32px));padding:14px;border-radius:14px;background:rgba(15,15,22,.96);border:1px solid var(--lime);color:#f4f4f8;text-align:left;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.eia-panel.hidden{display:none}
+.eia-panel b{color:var(--lime);font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+.eia-panel p{margin:8px 0;font-size:15px;line-height:1.4}
+.eia-rhymes{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.eia-rhymes span{background:#242432;border:1px solid #3a3a4a;border-radius:999px;padding:5px 12px;font-weight:800;font-size:16px}
+.eia-more{border:1px solid var(--lime);background:none;color:var(--lime);border-radius:10px;padding:8px 12px;font:800 14px inherit;font-family:inherit;cursor:pointer}
+.eia-battle{margin:10px 0}
+.beat-pick{display:flex;align-items:center;gap:6px;font-weight:700}
+.beat-pick select{max-width:230px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface-2);color:var(--txt);padding:9px 10px;font:700 14px inherit;font-family:inherit}
+/* Editor de voz */
+.ev-card{width:min(1040px,100%)}
+.ev-canvas{width:100%;height:auto;aspect-ratio:1000/240;border-radius:12px;border:1px solid var(--line-2);cursor:crosshair;touch-action:none;background:#0B0B0F}
+.ev-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ev-row .btn{font-size:14px}
+.ev-gain{width:auto;border-radius:10px;border:1px solid var(--line-2);background:var(--surface-2);color:var(--txt);padding:8px;font:700 14px inherit;font-family:inherit}
+.ev-info{font-family:ui-monospace,monospace}
+/* Rapear con imágenes */
+.ri-card{width:min(760px,100%)}
+.ri-img{width:100%;max-height:60vh;object-fit:cover;border-radius:14px;border:1px solid var(--line-2);background:#0B0B0F}
+/* "?" en cada juego */
+.gc-wrap{position:relative;display:block}
+.gc-wrap .game-card{width:100%;height:100%}
+.gc-help{position:absolute;top:6px;right:6px;z-index:2}

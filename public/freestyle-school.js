@@ -83,7 +83,19 @@
   ];
   // Ayuda de cada juego (el "?"): cómo se juega, cómo se puntúa y un ejemplo
   const PUNTOS_BASE = 'Puntaje = consignas × aciertos × 4 × dificultad (y sube con el BPM). XP = mitad del puntaje + 8 por minuto. Verificada por voz = XP completo; si te calificas tú, el 40 %.';
-  const AYUDA = {
+    // Qué consigues con cada juego (se muestra en su "?")
+  const GAIN = {
+    univocal: 'Entrenas el oído para la vocal final y rimas más rápido.', relampago: 'Ganas velocidad para encontrar rimas al instante.',
+    cadena: 'Aprendes a enlazar barras y a sostener una rima durante 4 barras.', bomba: 'Pierdes el miedo a palabras inesperadas y mejoras tu reacción.',
+    objetos: 'Describes lo que ves y ganas imágenes para tus barras.', tematicas: 'Aprendes a no salirte del tema y a desarrollarlo.',
+    terminaciones: 'Dominas familias de rimas y alargas los finales.', pie: 'Preparas un remate y lo sueltas en el momento justo.',
+    contrastes: 'Aprendes a oponer ideas y a girar el sentido con un remate.', personajes: 'Cambias de voz y punto de vista: más creatividad.',
+    fms: 'Resistencia, respiración y agilidad mental como en una competencia real.', minutolibre: 'Flow continuo: no parar de rapear aunque no haya tema.',
+    minutosangre: 'Reacción inmediata: una palabra por compás.', desahogo: 'Pones en palabras lo que sientes, sin presión.',
+    mibarrio: 'Cuentas tu lugar con detalles propios.', mihistoria: 'Narras tu historia con orden y emoción.',
+    superacion: 'Conviertes una caída en una barra que inspira.', amordesamor: 'Hablas de emociones con honestidad e imágenes.'
+  };
+const AYUDA = {
     univocal: { how: 'Cada barra te da una palabra con la vocal elegida; la dices al final de tu barra. Las 4 palabras de un bloque riman entre sí y luego cambia la familia.', score: PUNTOS_BASE, ex: 'Vocal A: casa → fama → plata → nada.' },
     relampago: { how: 'Te dan una palabra. Escribe (o di) todas las rimas que puedas antes de que acabe el tiempo; Enter después de cada una. "Otra" cambia la palabra.', score: 'Rima consonante +2, asonante +1. Las comprueba el propio juego, así que siempre da el XP completo.', ex: 'Palabra "canción": corazón (+2), amor (+1).' },
     cadena: { how: 'Una palabra por barra: las 4 de cada bloque riman igual (consonante) y después cambia la terminación.', score: PUNTOS_BASE, ex: 'pasado → lado → soldado → cuidado.' },
@@ -95,7 +107,7 @@
     contrastes: { how: 'Dos ideas opuestas: conéctalas en tus barras.', score: 'Con voz, cuenta si dijiste las dos ideas.', ex: 'HIELO ⚡ FUEGO: "fui hielo cuando todos eran fuego".' },
     personajes: { how: 'Te dicen quién eres y rapeas en primera persona, con detalles del personaje.', score: 'Con voz, cuenta cuántas palabras dices (flow continuo).', ex: 'Eres "un taxista de Lima": cuenta tu día al volante.' },
     fms: { how: 'Cinco rondas seguidas, de menos a más presión: Easy, Hard, Temática, Personajes y Minuto de sangre. Cada ronda dura 16 compases.', score: PUNTOS_BASE + ' Cuenta todas las rondas juntas.', ex: 'En EASY sale una palabra cada 4 compases; en MINUTO DE SANGRE, cada compás.' },
-    minutolibre: { how: 'Dura 60 segundos sobre el beat. No hay palabra, tema ni personaje: rapeas lo que quieras sin parar.', score: 'Con voz, cuenta cuántas palabras dices (flow continuo); sin voz te calificas tú (XP al 40 %). Es el "minuto libre" de las batallas, pero para practicar solo.', ex: 'Hablas de tu semana, de tu calle o de lo que se te ocurra, 60 segundos seguidos.' },
+    minutolibre: { how: 'Dura 60 segundos sobre el beat. Cada 2 compases aparece un disparador nuevo (una palabra y un tema): úsalo o sigue con tu idea, pero no pares de rapear.', score: 'Con voz, cuenta cuántas palabras dices (flow continuo); sin voz te calificas tú (XP al 40 %). Es el "minuto libre" de las batallas, pero para practicar solo.', ex: 'Hablas de tu semana, de tu calle o de lo que se te ocurra, 60 segundos seguidos.' },
     minutosangre: { how: 'Dura 60 segundos. Sale una palabra nueva en cada compás y la metes en tu barra sin soltar el ritmo.', score: PUNTOS_BASE, ex: 'Palabras: lluvia → mesa → cohete → río… una por compás.' },
     desahogo: { how: 'Eliges una emoción (rabia, tristeza, alegría, nostalgia, amor, miedo o esperanza). Salen palabras e ideas de esa emoción cada 8 compases; rapea lo que sientas. Termina cuando quieras.', score: 'No hay puntaje ni XP, no se guarda nada y el micrófono no verifica. Es solo para ti.', ex: 'Emoción "esperanza": palabra "semilla", idea "¿qué semilla estás plantando hoy?".' },
     mibarrio: { how: 'Salen palabras e ideas de tu barrio. Úsalas para contar tu lugar con tus propias barras.', score: PUNTOS_BASE, ex: 'Palabra "esquina": "en la esquina de mi casa aprendí a esperar".' },
@@ -112,7 +124,7 @@
   ];
   window.__ayudaEscuela = key => {
     let m;
-    if ((m = /^game_(\w+)$/.exec(key)) && AYUDA[m[1]]) { const g = GAME[m[1]], a = AYUDA[m[1]]; return [g.name, 'Qué es: ' + g.desc + ' Cómo se juega: ' + a.how + ' Cómo se puntúa: ' + a.score, a.ex]; }
+    if ((m = /^game_(\w+)$/.exec(key)) && AYUDA[m[1]]) { const g = GAME[m[1]], a = AYUDA[m[1]]; return [g.name, 'Qué es: ' + g.desc + ' Cómo se juega: ' + a.how + ' Cómo se puntúa: ' + a.score + (GAIN[m[1]] ? ' Qué consigues: ' + GAIN[m[1]] : ''), a.ex]; }
     if ((m = /^fase_(\d)$/.exec(key)) && FASES[+m[1]]) { const f = FASES[+m[1]]; return ['Ronda ' + (+m[1] + 1) + ' · ' + f[0], f[1] + ' Se puntúa como el resto del Modo Batalla.', f[2]]; }
     return null;
   };
@@ -215,7 +227,7 @@
   }
   function makePrompt(gid, diff, vowelCfg, s) {
     switch (gid) {
-      case 'minutolibre': return { main: 'LIBRE', cls: 'xl', sub: 'Un minuto sin tema: di lo que quieras y no pares', slotLabels: ['abre', 'sube', 'aprieta', 'cierra'], check: { type: 'flow' } };
+      case 'minutolibre': { const it = WORD_BAGS[diff](); return { main: it.w, sub: 'Disparador: úsalo o cambia de idea · tema: ' + B.topic(), slotLabels: ['abre', 'sube', 'aprieta', 'cierra'], check: { type: 'flow' } }; }
       case 'minutosangre': return makePrompt('bomba', diff, vowelCfg, s);
       case 'desahogo': { const pk = emociones[emocion] || emociones.esperanza; const p = packPrompt(pk, 'emo_' + emocion); p.check = { type: 'flow' }; return p; }
       case 'mibarrio': case 'mihistoria': case 'superacion': case 'amordesamor': return packPrompt(temasP[gid], 'tema_' + gid);
@@ -411,10 +423,11 @@
   function renderGrid() {
     el.grid.innerHTML = GAMES.map(g => {
       const lock = !isUnlocked(g);
-      return '<button type="button" class="game-card' + (g.id === selected ? ' on' : '') + (lock ? ' locked' : '') + '" data-g="' + g.id + '"' + (lock ? ' aria-disabled="true"' : '') + '>' +
+      return '<div class="gc-wrap"><button type="button" class="game-card' + (g.id === selected ? ' on' : '') + (lock ? ' locked' : '') + '" data-g="' + g.id + '"' + (lock ? ' aria-disabled="true"' : '') + '>' +
         '<span class="gc-icon">' + g.icon + '</span><span class="gc-name">' + esc(g.name) + '</span>' +
         '<span class="gc-meta">Nv ' + g.level + (data.bests[g.id] ? ' · 🏅 ' + Math.round(data.bests[g.id]) : '') + '</span>' +
-        (lock ? '<span class="gc-lock">🔒 ' + LEVEL_XP[g.level] + ' XP</span>' : '') + '</button>';
+        (lock ? '<span class="gc-lock">🔒 ' + LEVEL_XP[g.level] + ' XP</span>' : '') + '</button>' +
+        '<button type="button" class="help-q gc-help" data-help="game_' + g.id + '" aria-label="Ayuda: ' + esc(g.name) + '">?</button></div>';
     }).join('');
     const g = GAME[selected];
     el.info.innerHTML = '<span class="what">¿Qué es esto?</span> <b>' + g.icon + ' ' + esc(g.name) + '</b>' +
@@ -608,7 +621,7 @@
   const COUNT_IN = 4;
   function everyFor(gid, diff) {
     if (GAME[gid] && GAME[gid].fixedEvery) return GAME[gid].fixedEvery;
-    if (GAME[gid] && GAME[gid].free) return +(el.every.value === 'auto' ? 8 : el.every.value);
+    if (GAME[gid] && GAME[gid].free) return +(el.every.value === 'auto' ? 4 : el.every.value);
     const v = el.every.value;
     if (v !== 'auto') return +v;
     const e = EVERY[gid]; return e ? e[DIFFS.indexOf(diff)] : 4;
@@ -636,8 +649,9 @@
   }
   function elegirBeat(bpm, evitar) {
     const BP = window.BeatPresets; if (!BP) return null;
+    if (basePick) { const it = BP.pro.find(x => x.id === basePick); if (it) return it; }                // base elegida a mano
     const m = el.gbeat.value;
-    let lista = BP.items.filter(x => m === 'random' || x.g === m);
+    let lista = BP.pro.filter(x => m === 'random' || x.g === m); if (!lista.length) lista = BP.pro.slice();
     const sin = lista.filter(x => !evitar.includes(x.id)); if (sin.length) lista = sin;         // distinto del anterior
     const dist = x => Math.abs(Math.log(bpm / x.bpm));
     const cerca = lista.filter(x => dist(x) <= Math.log(1.2));                                  // el BPM encaja (±20 %)
@@ -666,10 +680,27 @@
   // Baja el beat mientras el micrófono escucha (el reconocimiento de voz oye mejor sin música encima)
   function beatDuck(on) { gbDuck = !!on; if (gb) { try { gb.gain.gain.setTargetAtTime(beatVol(), S.now(), 0.08); } catch (e) { } } }
   { const vn = $('#voiceNote'); const mostrar = () => vn.classList.toggle('hidden', !el.voice.checked); el.voice.addEventListener('change', mostrar); mostrar(); }
+  // Selector de base concreta (en vez de solo aleatoria)
+  let basePick = lsGet('school_pick', '');
+  const pickSel = $('#baseConcreta');
+  function fillPick() {
+    const BP = window.BeatPresets; if (!BP || pickSel.dataset.f) return; pickSel.dataset.f = '1';
+    BP.GENEROS.forEach(g => {
+      BP.pro.filter(x => x.g === g.id).forEach(it => { const o = document.createElement('option'); o.value = it.id; o.textContent = g.n + ' · ' + it.n + ' · ' + it.bpm + ' BPM'; pickSel.append(o); });
+    });
+    pickSel.value = basePick; if (pickSel.value !== basePick) { basePick = ''; pickSel.value = ''; }
+  }
+  const loadPick = async () => { if (!window.BeatPresets && window.Cabina && Cabina.presets) { try { await Cabina.presets(); } catch (e) { } } fillPick(); };
+  pickSel.addEventListener('focus', loadPick); pickSel.addEventListener('mousedown', loadPick); setTimeout(loadPick, 1500);
+  pickSel.addEventListener('change', async () => {
+    basePick = pickSel.value; lsSet('school_pick', basePick); gbNext = null; beatLabel();
+    if (basePick && sess && sess.beatOn) { const it = window.BeatPresets && BeatPresets.pro.find(x => x.id === basePick); if (it) { gbLast = it.id; await beatCambia(it, sess.bpm); } }
+  });
   el.gbeat.addEventListener('change', () => { lsSet('school_beat', el.gbeat.value); gbNext = null; beatLabel(); });
   el.gbvol.addEventListener('input', () => { lsSet('school_beatvol', +el.gbvol.value); if (gb) { try { gb.gain.gain.setTargetAtTime(beatVol(), S.now(), 0.03); } catch (e) { } } });
   el.beatNext.addEventListener('click', async () => {
     const m = el.gbeat.value; if (m === 'none') return;
+    basePick = ''; pickSel.value = ''; lsSet('school_pick', '');
     if (sess && sess.beatOn) {
       const it = elegirBeat(sess.bpm, [gb && gb.item.id, gbLast]); if (!it) return;
       gbLast = it.id; lsSet('school_lastbeat', gbLast); await beatCambia(it, sess.bpm); return;
@@ -714,7 +745,7 @@
     sess = {
       g, diff, bpm, beat, t0, firstBeat: t0 + COUNT_IN * beat, nextIdx: -COUNT_IN, nextTime: t0, queue: [],
       prompts: 0, results: [], detail: [], pending: [], cur: null, upcoming: null,
-      every: g.id === 'minutolibre' ? Math.ceil(g.fixedSec / (4 * beat)) : everyFor(g.id, diff),   // el minuto libre es UNA sola consigna que dura todo el minuto
+      every: g.id === 'minutolibre' ? 2 : everyFor(g.id, diff),   // el minuto libre cambia de disparador (palabra + tema) cada 2 compases, sin parar
       durSec: g.type === 'battle' || g.free ? 0 : (g.fixedSec || +el.dur.value), stage: -1, base: null,
       voice: el.voice.checked && !g.free, words: 0, ended: false, rl: null
     };
