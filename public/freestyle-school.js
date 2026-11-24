@@ -420,17 +420,20 @@ const AYUDA = {
     $('#xpFill').style.width = clamp(pct, 0, 100) + '%';
     $('#xpMeta').textContent = r.next ? Math.round(data.xp) + ' / ' + r.next[0] + ' XP para ' + r.next[1] : '¡Rango máximo alcanzado!';
   }
+  // Íconos propios (SVG de línea, reemplazan a los emojis)
+  const SVGI = {univocal:'M12 4 5 20M12 4l7 16M8 14h8',relampago:'M13 2 5 14h6l-1 8 9-13h-6z',cadena:'M10 14a4 4 0 0 1 0-6l3-3a4 4 0 0 1 6 6l-1.5 1.5M14 10a4 4 0 0 1 0 6l-3 3a4 4 0 0 1-6-6l1.5-1.5',bomba:'M11 21a7 7 0 1 1 0-14 7 7 0 0 1 0 14zM16 8l3-3M19 5l1-1',objetos:'M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12 4 7.5',tematicas:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 11.5a.5.5 0 1 0 0 1 .5.5 0 0 0 0-1',terminaciones:'M4 12h13M13 8l4 4-4 4M20 5v14',pie:'M9 4c3 0 4 3 4 6s-1 6-1 8a3 3 0 0 1-6 0c0-3 1-5 1-8s0-6 2-6zM16 6h.01M19 9h.01M19 13h.01',contrastes:'M12 4v16M6 20h12M4 8h16M4 8l-2 6a3 3 0 0 0 4 0zM20 8l-2 6a3 3 0 0 0 4 0z',personajes:'M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM9 10h.01M15 10h.01M8 15q4 4 8 0',fms:'M7 4h10v6a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 15v4M8 20h8',minutolibre:'M12 5a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 13V8M9 2h6',minutosangre:'M12 3C12 3 5 11 5 15a7 7 0 0 0 14 0C19 11 12 3 12 3z',desahogo:'M4 5h16v10H10l-4 4v-4H4z',mibarrio:'M3 11 12 3l9 8M5 10v10h14V10M10 20v-6h4v6',mihistoria:'M4 5a2 2 0 0 1 2-2h14v15H6a2 2 0 0 0 0 4h14M8 7h8',superacion:'M3 20 9 8l4 6 3-4 5 10z',amordesamor:'M12 21C5 15 3 11 3 8a4.5 4.5 0 0 1 9-1 4.5 4.5 0 0 1 9 1c0 3-2 7-9 13z'};
+  const iconSvg = (id, fb) => SVGI[id] ? '<svg class="gc-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + SVGI[id] + '"/></svg>' : fb;
   function renderGrid() {
     el.grid.innerHTML = GAMES.map(g => {
       const lock = !isUnlocked(g);
       return '<div class="gc-wrap"><button type="button" class="game-card' + (g.id === selected ? ' on' : '') + (lock ? ' locked' : '') + '" data-g="' + g.id + '"' + (lock ? ' aria-disabled="true"' : '') + '>' +
-        '<span class="gc-icon">' + g.icon + '</span><span class="gc-name">' + esc(g.name) + '</span>' +
+        '<span class="gc-icon">' + iconSvg(g.id, g.icon) + '</span><span class="gc-name">' + esc(g.name) + '</span>' +
         '<span class="gc-meta">Nv ' + g.level + (data.bests[g.id] ? ' · 🏅 ' + Math.round(data.bests[g.id]) : '') + '</span>' +
         (lock ? '<span class="gc-lock">🔒 ' + LEVEL_XP[g.level] + ' XP</span>' : '') + '</button>' +
         '<button type="button" class="help-q gc-help" data-help="game_' + g.id + '" aria-label="Ayuda: ' + esc(g.name) + '">?</button></div>';
     }).join('');
     const g = GAME[selected];
-    el.info.innerHTML = '<span class="what">¿Qué es esto?</span> <b>' + g.icon + ' ' + esc(g.name) + '</b>' +
+    el.info.innerHTML = '<span class="what">¿Qué es esto?</span> <b>' + iconSvg(g.id, g.icon) + ' ' + esc(g.name) + '</b>' +
       '<button type="button" class="help-q" data-help="game_' + g.id + '" aria-label="Ayuda: ' + esc(g.name) + '">?</button> — ' + esc(g.desc) + '<br><span class="tip">💡 ' + esc(g.tip) + '</span>' +
       (g.nota ? '<br><span class="nota-apoyo">💬 ' + esc(g.nota) + '</span>' : '') +
       (g.id === 'fms' ? '<div class="phases">' + FASES.map((f, i) => '<span class="phase">' + (i + 1) + '. ' + esc(f[0]) + '<button type="button" class="help-q" data-help="fase_' + i + '" aria-label="Ayuda: ronda ' + esc(f[0]) + '">?</button></span>').join('') + '</div>' : '');

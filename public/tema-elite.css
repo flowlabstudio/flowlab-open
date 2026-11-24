@@ -108,3 +108,17 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .gc-wrap{position:relative;display:block}
 .gc-wrap .game-card{width:100%;height:100%}
 .gc-help{position:absolute;top:6px;right:6px;z-index:2}
+/* Pulido del tema claro */
+.mode-info{width:44px;height:44px;justify-self:start}
+html[data-tema=claro] input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),html[data-tema=claro] select,html[data-tema=claro] textarea{background:#fff;color:#14141B;border-color:#BDBDCC}
+html[data-tema=claro] .mic-test,html[data-tema=claro] .chain,html[data-tema=claro] .tl-head,html[data-tema=claro] pre,html[data-tema=claro] .lang-sel{background:#ECECF3;color:#14141B}
+html[data-tema=claro] .glos-btn,html[data-tema=claro] .install-btn{background:#fff;color:#14141B;border-color:#BDBDCC}
+html[data-tema=claro] .status-text,html[data-tema=claro] .hint,html[data-tema=claro] small{color:#55556A}
+html[data-tema=claro] .base-card{background:#fff}
+html[data-tema=claro] .game-card,html[data-tema=claro] .block,html[data-tema=claro] .panel{background:#fff;color:#14141B}
+html[data-tema=claro] .editor-wrap textarea,html[data-tema=claro] #mainTextarea{background:#fff}
+/* Íconos propios de los juegos */
+.gc-svg{width:26px;height:26px;color:var(--lime);vertical-align:middle;flex:none}
+.gc-icon{display:grid;place-items:center}
+.what+b .gc-svg{width:20px;height:20px;margin-right:4px}
+html[data-tema=claro] .gc-svg{color:#5C6B00}
