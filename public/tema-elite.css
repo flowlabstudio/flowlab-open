@@ -122,3 +122,10 @@ html[data-tema=claro] .editor-wrap textarea,html[data-tema=claro] #mainTextarea{
 .gc-icon{display:grid;place-items:center}
 .what+b .gc-svg{width:20px;height:20px;margin-right:4px}
 html[data-tema=claro] .gc-svg{color:#5C6B00}
+/* Cabecera: nada se encima; si falta ancho, las herramientas bajan a otra fila */
+.topbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+.topbar .brand{flex:0 0 auto;cursor:pointer}
+.topbar .modes{flex:0 0 auto;justify-self:auto;margin-left:auto}
+.topbar .mode-info{flex:0 0 auto}
+.topbar .status-strip{flex:1 1 auto;flex-wrap:wrap;justify-content:flex-end}
+@media (max-width:1100px){.topbar .modes{margin-left:0}}
