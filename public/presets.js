@@ -127,6 +127,7 @@
     { id: 'pro-guitarra-verano', g: 'reggaeton', n: 'Guitarra de Verano', bpm: 92, audio: 'assets/bases/guitarra-verano.mp3', tag: 'Con guitarra' },
     { id: 'pro-midnight-rhodes', g: 'hiphop', n: 'Midnight Rhodes', bpm: 80, audio: 'assets/bases/midnight-rhodes.mp3', tag: 'Lo-fi' },
     { id: 'pro-noche-sensual', g: 'reggaeton', n: 'Noche Sensual', bpm: 78, audio: 'assets/bases/noche-sensual.mp3', tag: 'Lento' },
+    { id: 'pro-midnight-slideway', g: 'trap', n: 'Midnight Slideway', bpm: 98, audio: 'assets/bases/midnight-slideway.mp3', tag: 'Trap con 808' },
     { id: 'pro-sombra-nocturna', g: 'trap', n: 'Sombra Nocturna', bpm: 89, audio: 'assets/bases/sombra-nocturna.mp3', tag: 'Trap oscuro' },
     { id: 'pro-velocidad-maxima', g: 'reggaeton', n: 'Velocidad Máxima', bpm: 95, audio: 'assets/bases/velocidad-maxima.mp3', tag: 'Doble tempo' }
   ];
