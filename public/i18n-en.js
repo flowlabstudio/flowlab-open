@@ -227,11 +227,29 @@
     'Récord de rondas verificadas': 'Best verified rounds', 'Récord de rondas de autoevaluación (sin verificar)': 'Best self-scored rounds (unverified)',
     'Elegir una base de FlowLab para el juego': 'Pick a FlowLab track for the game', 'Volumen del beat del juego': 'Game beat volume',
     'Pista de IA para este reto': 'AI hint for this challenge', 'Barras del 4x4': '4x4 bars', 'Enlaces del pie': 'Footer links',
-    'Bloc de notas y modo entrenamiento': 'Notepad and training mode', 'Base: el beat de fondo': 'Base: the backing beat'
+    'Bloc de notas y modo entrenamiento': 'Notepad and training mode', 'Base: el beat de fondo': 'Base: the backing beat',
+    // Segunda pasada
+    'Saltar al contenido': 'Skip to content', 'Privacidad': 'Privacy',
+    '🎵 Elegir un beat de FlowLab': '🎵 Choose a FlowLab beat', 'Beat de FlowLab · se carga como Pista 1, en bucle': 'FlowLab beat · loads as Track 1, looped',
+    'Oscuro, con 808': 'Dark, with 808s', 'Dembow para perrear y fluir': 'Dembow grooves', 'Boom bap con swing': 'Swinging boom bap', 'Lo-fi y relajado': 'Laid-back lo-fi', 'Frío y rápido': 'Cold and fast',
+    'Base activa:': 'Active track:', 'ninguna': 'none', 'Bloc de notas': 'Notepad', '✓ guardado': '✓ saved', 'Bloc de Notas · Editor Continuo': 'Notepad · continuous editor',
+    'Mis Temas': 'My songs', '✎ Renombrar': '✎ Rename', 'Consonante': 'Perfect rhyme', 'Asonante': 'Vowel rhyme',
+    'Escucharme en vivo': 'Hear myself live', '(Monitoreo)': '(Monitoring)', 'Nota:': 'Note:', 'Frec:': 'Freq:', 'Grado:': 'Degree:', 'GRABAR TOMA': 'RECORD TAKE', 'esperando…': 'waiting…',
+    '🔊 Probar sonido': '🔊 Test sound', 'Presets de Estudio': 'Studio presets', 'Retune 95% · brillante': 'Retune 95% · bright', 'Retune 85% · presencia': 'Retune 85% · presence',
+    'Cadena de procesamiento': 'Processing chain', '(Auto-Tune)': '(Auto-Tune)', 'Cambio de tono (Pitch shift, semitonos)': 'Pitch shift (semitones)', 'Escala': 'Scale',
+    'Eco de sala (reverb)': 'Room echo (reverb)', '↺ Resetear Perillas': '↺ Reset knobs', '⌨ Atajos:': '⌨ Shortcuts:', 'Grabar/Detener': 'Record/Stop', 'Beat al inicio': 'Beat to start', 'Reproducir mezcla': 'Play mix',
+    '■ Parar': '■ Stop', '↓ Exportar Mezcla Final (.WAV)': '↓ Export final mix (.WAV)', 'PISTA 1 · BASE': 'TRACK 1 · BEAT',
+    'Velocidad (BPM)': 'Speed (BPM)', 'Kit de sonidos': 'Sound kit', 'Pasos (16 o 32)': 'Steps (16 or 32)', '🧹 Limpiar': '🧹 Clear', '▶ Escuchar kit': '▶ Listen to kit', '(realza graves)': '(boosts bass)',
+    'Vinilo': 'Vinyl', 'Filtro': 'Filter', '+ Platillo': '+ Cymbal', '⬇ Descargar mi beat (.WAV)': '⬇ Download my beat (.WAV)', 'MI BEAT': 'MY BEAT',
+    '🎮 Juegos': '🎮 Games', '📈 Mi progreso': '📈 My progress', 'Dificultad': 'Difficulty', 'Medio': 'Medium', 'Vocal forzada': 'Forced vowel', 'Ver siguiente': 'Show next', '■ Terminar': '■ Finish',
+    'MUY CORTO': 'TOO SHORT', '· Tiempo': '· Time', '· Consignas': '· Prompts', '· Medio': '· Medium', '· Difícil': '· Hard', '🔀 Otro beat': '🔀 Another beat',
+    'Rango': 'Rank', 'XP total': 'Total XP', 'Sesiones': 'Sessions', 'Minutos': 'Minutes', 'Racha': 'Streak', 'Mejor racha': 'Best streak', 'Mejores puntajes': 'Best scores',
+    'Historial': 'History', '⬇ Exportar': '⬇ Export', '⬆ Importar': '⬆ Import', 'Reiniciar': 'Reset'
   };
   const de = s => D[s] !== undefined ? D[s] : s;
   const P = [   // textos con partes variables
-    [/^(—|💡|💬) (.+)$/, (m, i, a) => i + ' ' + de(a)],
+    [/^(.+) · (Fácil|Medio|Difícil)$/, (m, a, n) => a + ' · ' + de(n)],
+    [/^([^\p{L}\p{N}]+) (\p{L}.*)$/u, (m, i, a) => i + ' ' + de(a)],   // ícono o raya delante: "🏆 Modo Batalla", "— descripción"
     [/^Ayuda: ronda (.+)$/, (m, a) => 'Help: round ' + de(a)],
     [/^Ayuda: (.+)$/, (m, a) => 'Help: ' + de(a)],
     [/^Reggaetón · (.+)$/, (m, a) => 'Reggaeton · ' + a],
