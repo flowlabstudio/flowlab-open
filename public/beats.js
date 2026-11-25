@@ -946,46 +946,52 @@
   });
 
   /* ---------------- Ritmos por género (Mejoras 5 · C) ---------------- */
-  let genero = lsGet('beats_genero', 'trap'), presetPend = '', presetPendT = 0, presetActual = '';
-  const genChips = $('#btGenres'), cardsEl = $('#btCards');
-  const LIBRE = { id: 'libre', n: 'Libre 🎲', tag: 'Sin género: "Sorpréndeme" inventa un patrón al azar.' };
+  let genero = lsGet('beats_genero', 'trap');
+  const genChips = $('#btGenres');
   function dibujaGeneros() {
     const BP = window.BeatPresets; if (!BP) return;
-    const lista = BP.GENEROS.concat([LIBRE]); if (!lista.some(g => g.id === genero)) genero = 'trap';
+    if (!BP.GENEROS.some(g => g.id === genero)) genero = 'trap';
     genChips.textContent = '';
-    lista.forEach(g => {
+    BP.GENEROS.forEach(g => {
       const b = mk('button', 'bt-gchip', g.n); b.type = 'button'; b.dataset.genero = g.id; b.setAttribute('aria-pressed', String(g.id === genero));
       b.addEventListener('click', () => { genero = g.id; lsSet('beats_genero', genero); dibujaGeneros(); });
       genChips.append(b);
     });
-    $('#btGenreTag').textContent = (lista.find(g => g.id === genero) || {}).tag || '';
-    cardsEl.textContent = '';
-    if (genero === 'libre') { cardsEl.append(mk('p', 'hint', 'Modo libre: arma tu patrón desde cero o pulsa "Sorpréndeme" para que se invente uno.')); return; }
-    BP.items.filter(x => x.g === genero).forEach(it => {
-      const c = mk('button', 'bt-card' + (it.id === presetActual ? ' cur' : '')); c.type = 'button'; c.dataset.id = it.id;
-      c.setAttribute('aria-label', 'Cargar el ritmo ' + it.n + ', ' + it.bpm + ' BPM');
-      c.append(mk('b', null, it.n), mk('small', null, it.bpm + ' BPM · ' + KITS[it.kit].n + (it.steps === 32 ? ' · 2 compases' : '')));
-      c.addEventListener('click', () => cargarPreset(it, false));
-      cardsEl.append(c);
+    const actual = BP.GENEROS.find(g => g.id === genero);
+    $('#btGenreTag').textContent = enIngles() ? actual.en : actual.tag;
+    dibujaBases(BP);
+  }
+  /* Bases completas (MP3) del género: se escuchan aquí mismo y se mandan a la Cabina para rapear encima */
+  const enIngles = () => /^en/i.test(document.documentElement.lang || '');
+  function dibujaBases(BP) {
+    const box = $('#btPro'); if (!box) return;
+    box.textContent = '';
+    const bases = (BP.pro || []).filter(x => x.g === genero), en = enIngles();
+    if (!bases.length) return;
+    box.append(mk('h4', 'bt-pro-title', en ? 'Full tracks' : 'Bases completas'));
+    const grid = mk('div', 'bt-pro-grid');
+    bases.forEach(it => {
+      const card = mk('div', 'bt-pro-card'), au = document.createElement('audio'), msg = mk('small', 'bt-pro-msg');
+      au.controls = true; au.preload = 'none'; au.src = it.audio; au.setAttribute('aria-label', (en ? 'Listen to ' : 'Escuchar ') + it.n);
+      au.addEventListener('play', () => { if (playing) stop(); box.querySelectorAll('audio').forEach(o => { if (o !== au) o.pause(); }); });
+      const use = mk('button', 'btn btn-neon btn-small', en ? 'Rap over this' : 'Rapear con esta'); use.type = 'button'; msg.setAttribute('role', 'status');
+      use.addEventListener('click', async () => {
+        if (S.isRecording && S.isRecording()) { msg.textContent = en ? 'Stop recording before changing the beat.' : 'Detén la grabación antes de cambiar la base.'; return; }
+        use.disabled = true; au.pause(); msg.textContent = en ? 'Loading…' : 'Preparando…';
+        try {
+          const r = await renderPreset(it.id, 4);
+          if (r && S.setBeatBase(r.buf, r.nombre)) { msg.textContent = ''; if (window.Cabina) Cabina.irA('cabina'); }
+          else msg.textContent = en ? 'Could not load this track.' : 'No se pudo cargar esta base.';
+        } catch (e) { console.error(e); msg.textContent = en ? 'Could not load this track.' : 'No se pudo cargar esta base.'; }
+        use.disabled = false;
+      });
+      card.append(mk('b', null, it.n), mk('small', null, it.bpm + ' BPM'), au, use, msg);
+      grid.append(card);
     });
+    box.append(grid);
   }
-  // Un toque carga el ritmo (patrón, tempo, kit, swing y efectos); si tenías cambios sin guardar, pide un segundo toque
-  function cargarPreset(it, forzar) {
-    const BP = window.BeatPresets; if (!BP) return;
-    if (!forzar && savedDirty && presetPend !== it.id) {
-      presetPend = it.id; clearTimeout(presetPendT); presetPendT = setTimeout(() => { presetPend = ''; }, 5000);
-      say('Tienes cambios sin guardar. Toca otra vez "' + it.n + '" para cargarlo igual, o pulsa Guardar primero.'); return;
-    }
-    presetPend = '';
-    const x = sanitize(BP.aEstado(it)); if (!x) return;
-    const sonaba = playing && !demo;
-    loadState(x); presetActual = it.id;
-    cardsEl.querySelectorAll('.bt-card').forEach(c => c.classList.toggle('cur', c.dataset.id === it.id));
-    if (sonaba) play();
-    say('Cargado "' + it.n + '" · ' + it.bpm + ' BPM. Cámbialo a tu gusto: todo se puede editar.');
-  }
-  // Dibuja un ritmo de la casa SIN tocar tu patrón ni la pantalla de Beats (lo usan la Cabina y la Escuela).
-  // bpm opcional: el beat es sintético, así que su tempo se cambia sin perder calidad. bars se redondea a un múltiplo del patrón.
+  window.addEventListener('flowlab:lang', () => { if (window.BeatPresets) dibujaGeneros(); });
+  window.addEventListener('flowlab:mode', e => { if ((e.detail || {}).mode !== 'beats') document.querySelectorAll('#btPro audio').forEach(a => a.pause()); });
   // ---- Bases profesionales (MP3): se decodifican una vez y, si hace falta, se aceleran/frenan al BPM pedido ----
   const proCache = {};
   async function decodePro(url) {
@@ -1006,24 +1012,13 @@
     }
     return { buf, item: it, bpm: tgt, bars: Math.round(buf.duration / (4 * 60 / tgt)), kit: '', nombre: it.n + ' · ' + BP.GENEROS.find(g => g.id === it.g).n + ' · ' + tgt + ' BPM' };
   }
+  // Prepara una base completa para la Cabina o la Escuela (bpm opcional: la acelera o la frena)
   async function renderPreset(id, bars, bpm) {
-    const BP = window.BeatPresets, pro = BP && BP.pro && BP.pro.find(x => x.id === id); if (pro) return renderPro(pro, bpm);
-    const it = BP && BP.items.find(x => x.id === id); if (!it) return null;
-    const x = sanitize(BP.aEstado(it)); if (!x) return null;
-    if (bpm) x.bpm = clamp(Math.round(bpm), 40, 240);
-    const per = x.steps / 16, n = Math.max(per, Math.ceil((bars || per) / per) * per);
-    const buf = await renderBeat(x, n);
-    return { buf, item: it, bpm: x.bpm, bars: n, kit: x.kit, nombre: it.n + ' · ' + BP.GENEROS.find(g => g.id === it.g).n + ' · ' + x.bpm + ' BPM' };
+    const BP = window.BeatPresets, pro = BP && BP.pro.find(x => x.id === id);
+    return pro ? renderPro(pro, bpm) : null;
   }
-  // Sorpréndeme: un ritmo al azar del género elegido (o, en "Libre", el patrón al azar de siempre)
-  function sorprende() {
-    const BP = window.BeatPresets;
-    if (BP && genero !== 'libre') {
-      const lista = BP.items.filter(x => x.g === genero && x.id !== presetActual), it = lista[Math.floor(Math.random() * lista.length)];
-      if (it) { cargarPreset(it, true); return; }
-    }
-    randomize();
-  }
+  // Sorpréndeme: inventa un patrón al azar en los pads
+  function sorprende() { randomize(); }
   window.addEventListener('flowlab:presets', dibujaGeneros);
   if (window.BeatPresets) dibujaGeneros();
 
@@ -1073,6 +1068,6 @@
     INST, KITS, NOTES, VEL, makeEngine, voice,
     estado: () => serialize(st), cargar: s => { const x = sanitize(s); if (x) { loadState(x); renderMine(); } return !!x; },
     reproduciendo: () => playing, play, stop, aleatorio: randomize,
-    esPro, renderBeat, renderPreset, limitar, medir, demoKit, cargarPreset: id => { const it = window.BeatPresets && BeatPresets.items.find(x => x.id === id); if (it) cargarPreset(it, true); return !!it; }, KIT_DEMO, boost: () => modoCel, pasoDuracion: () => stepDur()
+    esPro, renderBeat, renderPreset, limitar, medir, demoKit, KIT_DEMO, boost: () => modoCel, pasoDuracion: () => stepDur()
   };
 })();

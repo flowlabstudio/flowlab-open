@@ -9,7 +9,7 @@
 (function () {
   const TERMINOS = [
     ['Base', 'beat instrumental música de fondo', 'La música de fondo sobre la que grabas o practicas. Puede ser un link de YouTube, tu MP3/WAV o un beat hecho en FlowLab.', 'Pegas el link de un beat de boom bap y rapeas encima.'],
-    ['Beat', 'ritmo instrumental', 'El ritmo y la música sin voz. En FlowLab lo armas con pads y un secuenciador, o eliges uno de los 25 ritmos listos.', 'El beat "Medianoche" es un trap a 140 BPM.'],
+    ['Beat', 'ritmo instrumental', 'El ritmo y la música sin voz. En FlowLab lo armas con pads y un secuenciador, o eliges una base completa.', 'El beat "Sombra Nocturna" es un trap a 89 BPM.'],
     ['BPM', 'tempo velocidad golpes por minuto', 'Golpes por minuto: la velocidad del beat. Más BPM = más rápido.', 'Boom bap ≈ 90 BPM, trap ≈ 140 BPM.'],
     ['TAP', 'tap tempo calcular bpm tocar', 'Un botón que calcula el BPM mientras tocas al ritmo de la música. Con 4 toques ya da un número; sigue tocando para afinarlo.', 'Escuchas un beat, tocas TAP 6 veces y el botón muestra "TAP · 94 BPM ✓".'],
     ['Compás', 'compases', 'Un grupo de 4 tiempos (golpes). En el freestyle, un compás suele ser una barra de tu letra.', '8 compases son 32 golpes: una estrofa corta.'],
