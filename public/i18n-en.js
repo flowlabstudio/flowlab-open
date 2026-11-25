@@ -231,6 +231,7 @@
   };
   const de = s => D[s] !== undefined ? D[s] : s;
   const P = [   // textos con partes variables
+    [/^(—|💡|💬) (.+)$/, (m, i, a) => i + ' ' + de(a)],
     [/^Ayuda: ronda (.+)$/, (m, a) => 'Help: round ' + de(a)],
     [/^Ayuda: (.+)$/, (m, a) => 'Help: ' + de(a)],
     [/^Reggaetón · (.+)$/, (m, a) => 'Reggaeton · ' + a],
