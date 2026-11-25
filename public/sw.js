@@ -9,7 +9,7 @@
    si no hay (o tarda más de 6 s), usa la copia guardada.
    Al publicar una versión nueva, sube el número de VERSION.
    ===================================================================== */
-const VERSION = 'flowlab-v49';
+const VERSION = 'flowlab-v50';
 const CORE = [
   './', 'styles.css',
   'app.js', 'autotune-worklet.js', 'freestyle-data.js', 'freestyle-school.js', 'cabina.js', 'beats.js', 'presets.js', 'help.js', 'glosario.js', 'ai-coach.js', 'burbuja-ia.js', 'graffiti.js', 'feedback.js', 'inicio.js', 'escuela-ia.js', 'editor-voz.js', 'rapear-imagenes.js', 'tema-elite.css', 'assets/img/hero.webp', 'assets/img/hero-2.webp', 'assets/img/genre-trap.webp', 'assets/img/genre-boombap.webp', 'assets/img/genre-reggaeton.webp', 'i18n.js', 'pwa.js',
