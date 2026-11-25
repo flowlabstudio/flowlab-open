@@ -104,3 +104,5 @@ The smoke test replaces the Firebase SDK with a fake module (no network, no keys
 ## License
 
 [Apache License 2.0](LICENSE). See [NOTICE](NOTICE) for third-party components.
+
+<!-- final build 2026-11-25 -->
