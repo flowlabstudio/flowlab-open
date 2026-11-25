@@ -29,6 +29,9 @@
     ['#btMineTitle', 'Mis beats', 'Tus beats guardados en este navegador (no se suben a internet). Puedes cargarlos, duplicarlos, renombrarlos o borrarlos.'],
     // ---- Escuela ----
     ['#school .school-head h3', 'Escuela de Freestyle', 'Juegos para entrenar freestyle de básico a batalla. Ganas XP (puntos de experiencia), subes de rango y desbloqueas juegos nuevos.'],
+    ['#beatPickT', 'Elige tu beat', 'La música sobre la que juegas: un beat de FlowLab (cambia en cada partida), el link de YouTube o tu MP3/WAV que subiste arriba. Practicar sobre un beat te enseña a rapear en el tiempo.'],
+    ['#school details > summary', 'Más opciones', 'Ajustes extra: cuánto dura la ronda, cada cuántos compases cambia la consigna, el volumen del beat y el metrónomo. Si dudas, déjalo en Auto.'],
+    ['#school .beat-pick', 'Base', 'Elige una base concreta de FlowLab para tu partida, o déjala en Aleatoria para que cambie cada vez. La base se ajusta a tu BPM.'],
     ['#school .rank-chip', 'Rango, XP y racha', 'Tu rango actual, tus puntos de experiencia y 🔥 tu racha: cuántos días seguidos llevas practicando.'],
     ['#mission', 'Reto del día', 'Cada día toca un juego y una dificultad distintos. Si lo completas ganas +50 XP extra. "Preparar" lo deja listo para jugar.'],
     ['#school label[for=bpmInput]', 'BPM', 'Golpes por minuto: qué tan rápida es la base (boom bap ≈ 85-95, trap ≈ 140). TAP: toca al ritmo de la música 3 veces o más. ½ y ×2: mitad o doble. 🔍 Base: lo calcula solo de tu MP3.'],

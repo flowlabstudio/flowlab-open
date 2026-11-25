@@ -118,6 +118,20 @@
     return { id: null, name: item.n, bpm: item.bpm, swing: item.swing, kit: item.kit, steps: item.steps, fx: Object.assign({}, item.fx), rows };
   }
 
-  window.BeatPresets = { GENEROS, items: R, aEstado, T332 };
+  // Bases profesionales (audio hecho con Google Flow Music). Cabina y Escuela usan SOLO estas; los ritmos sintéticos (items) quedan para el secuenciador de Beats.
+  const PRO = [
+    { id: 'pro-cold-steel-keys', g: 'drill', n: 'Cold Steel Keys', bpm: 143, audio: 'assets/bases/cold-steel-keys.mp3', tag: 'Drill frío' },
+    { id: 'pro-dembow-heat', g: 'reggaeton', n: 'Dembow Heat', bpm: 104, audio: 'assets/bases/dembow-heat.mp3', tag: 'Dembow' },
+    { id: 'pro-dusty-keys', g: 'rap', n: 'Dusty Keys & Swung Grooves', bpm: 92, audio: 'assets/bases/dusty-keys.mp3', tag: 'Boom bap' },
+    { id: 'pro-fiesta-dembow', g: 'reggaeton', n: 'Fiesta Dembow', bpm: 105, audio: 'assets/bases/fiesta-dembow.mp3', tag: 'Fiesta' },
+    { id: 'pro-guitarra-verano', g: 'reggaeton', n: 'Guitarra de Verano', bpm: 92, audio: 'assets/bases/guitarra-verano.mp3', tag: 'Con guitarra' },
+    { id: 'pro-midnight-rhodes', g: 'hiphop', n: 'Midnight Rhodes', bpm: 80, audio: 'assets/bases/midnight-rhodes.mp3', tag: 'Lo-fi' },
+    { id: 'pro-noche-sensual', g: 'reggaeton', n: 'Noche Sensual', bpm: 78, audio: 'assets/bases/noche-sensual.mp3', tag: 'Lento' },
+    { id: 'pro-midnight-slideway', g: 'trap', n: 'Midnight Slideway', bpm: 98, audio: 'assets/bases/midnight-slideway.mp3', tag: 'Trap con 808' },
+    { id: 'pro-sombra-nocturna', g: 'trap', n: 'Sombra Nocturna', bpm: 89, audio: 'assets/bases/sombra-nocturna.mp3', tag: 'Trap oscuro' },
+    { id: 'pro-velocidad-maxima', g: 'reggaeton', n: 'Velocidad Máxima', bpm: 95, audio: 'assets/bases/velocidad-maxima.mp3', tag: 'Doble tempo' }
+  ];
+
+  window.BeatPresets = { GENEROS, items: R, pro: PRO, aEstado, T332 };
   window.dispatchEvent(new CustomEvent('flowlab:presets'));
 })();

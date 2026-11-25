@@ -46,6 +46,7 @@
 }
 </script>
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="tema-elite.css">
 </head>
 <body>
 <a class="skip-link" href="#app">Saltar al contenido</a>
@@ -88,6 +89,14 @@
 </div>
 
 <main class="app" id="app">
+
+  <!-- ============ PORTADA (imagen hecha con Google Flow) ============ -->
+  <section class="hero-strip" data-show-in="cabina" aria-label="FlowLab Studio">
+    <div class="hero-txt"><h2>Rapea. Graba. Mejora.</h2><p>Tu estudio de freestyle con Coach de IA que piensa en tu dispositivo.</p></div>
+  </section>
+
+  <section class="hero-strip hero-beats" data-show-in="beats" aria-label="Beats"><div class="hero-txt"><h2>Arma tu beat</h2><p>Pads, secuenciador y bases de varios géneros.</p></div></section>
+  <section class="hero-strip hero-escuela" data-show-in="escuela" aria-label="Escuela"><div class="hero-txt"><h2>Entrena tu flow</h2><p>De cero a máximo: retos rápidos con rimas, palabras y batallas.</p></div></section>
 
   <!-- ============ BASE · las tres formas de poner el beat (Cabina y Escuela) ============ -->
   <section class="base-bar" id="panel-beat" data-show-in="cabina beats escuela" aria-label="Base: el beat de fondo">
@@ -745,7 +754,7 @@
                 <div id="gymFeedback" class="gym-feedback"></div>
                 <div class="relampago hidden" id="relampago">
                   <div class="rl-row">
-                    <input id="rlInput" type="text" placeholder="Escribe una rima y pulsa Enter…" autocomplete="off" maxlength="24" spellcheck="false">
+                    <input id="rlInput" type="text" placeholder="🎤 Di tus rimas en voz alta (o escríbelas + Enter)…" autocomplete="off" maxlength="24" spellcheck="false">
                     <button type="button" id="rlSkip" class="btn btn-ghost btn-small">⟳ Otra</button>
                   </div>
                   <div id="rlFound" class="rl-found"></div>
@@ -762,6 +771,7 @@
               <div class="gym-meta">Compás <b id="barCount">0</b> · Tiempo <b id="beatCount">0</b> · <span id="gymBpmLabel">90 BPM</span> · Consignas <b id="promptCount">0</b> <span id="voiceMeter"></span></div>
               <div class="beat-now" id="beatNowRow">
                 <span id="beatNow" role="status" aria-live="polite">Beat: se elige al empezar</span>
+                <label class="beat-pick">Base: <select id="baseConcreta" aria-label="Elegir una base de FlowLab para el juego"><option value="">🎲 Aleatoria</option></select></label>
                 <button type="button" id="beatNext" class="btn btn-ghost btn-small">🔀 Otro beat</button>
               </div>
               <div id="sessionResult" class="session-result hidden"></div>
@@ -806,6 +816,13 @@
 <script src="help.js"></script>
 <script src="glosario.js"></script>
 <script type="module" src="ai-coach.js"></script>
+<script src="burbuja-ia.js" defer></script>
+<script src="graffiti.js" defer></script>
+<script src="feedback.js" defer></script>
+<script src="inicio.js" defer></script>
+<script src="escuela-ia.js" defer></script>
+<script src="editor-voz.js" defer></script>
+<script src="rapear-imagenes.js" defer></script>
 <script src="pwa.js"></script>
 </body>
 </html>
