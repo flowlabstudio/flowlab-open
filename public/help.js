@@ -217,6 +217,8 @@
   window.addEventListener('resize', hide);
 
   inject();
+  // Al cambiar de idioma se reescriben algunos textos y se llevan su "?": se vuelven a poner
+  window.addEventListener('flowlab:lang', () => { hide(); setTimeout(inject, 0); });
   // Algunas zonas se redibujan (reto del día, progreso): se vuelven a poner sus "?" si faltan
   let t = null;
   const mo = new MutationObserver(() => { clearTimeout(t); t = setTimeout(inject, 80); });
