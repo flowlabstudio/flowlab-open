@@ -9,13 +9,13 @@
    si no hay (o tarda más de 6 s), usa la copia guardada.
    Al publicar una versión nueva, sube el número de VERSION.
    ===================================================================== */
-const VERSION = 'flowlab-v29';
+const VERSION = 'flowlab-v31';
 const CORE = [
-  './', 'styles.css',
-  'app.js', 'autotune-worklet.js', 'freestyle-data.js', 'freestyle-school.js', 'cabina.js', 'beats.js', 'presets.js', 'help.js', 'glosario.js', 'ai-coach.js', 'i18n.js', 'pwa.js',
+  './', 'css/styles.css', 'css/legal.css',
+  'js/loader.js', 'js/app.js', 'js/autotune-worklet.js', 'js/freestyle-data.js', 'js/freestyle-school.js', 'js/cabina.js', 'js/beats.js', 'js/presets.js', 'js/help.js', 'js/glosario.js', 'js/ai-coach.js', 'js/i18n.js', 'js/pwa.js',
   'assets/fonts/inter-latin-wght.woff2',
-  'manifest.json', 'favicon.ico', 'apple-touch-icon.png', 'legal.css', 'privacidad.html', '404.html',
-  'assets/logo.svg', 'assets/silencio.mp3', 'assets/icon-192.png', 'assets/icon-512.png', 'assets/icon-maskable-512.png'
+  'manifest.json', 'favicon.ico', 'apple-touch-icon.png', 'privacidad.html', '404.html',
+  'assets/logo.svg', 'assets/loader-flowlab.png', 'assets/silencio.mp3', 'assets/icon-192.png', 'assets/icon-512.png', 'assets/icon-maskable-512.png'
 ];
 const SLOW_MS = 6000;
 

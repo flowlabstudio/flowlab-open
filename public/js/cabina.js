@@ -32,7 +32,7 @@
   let presetsPedidos = false;
   function cargarPresets() {
     if (presetsPedidos || window.BeatPresets) return; presetsPedidos = true;
-    const sc = document.createElement('script'); sc.src = 'presets.js';
+    const sc = document.createElement('script'); sc.src = '/js/presets.js';
     sc.onerror = () => { presetsPedidos = false; const c = $('#btCards'); if (c) c.textContent = 'No se pudieron cargar los ritmos listos (¿sin internet?). Puedes seguir armando tu beat desde cero.'; };
     document.head.appendChild(sc);
   }
@@ -78,15 +78,21 @@
       setTimeout(() => { window.removeEventListener('flowlab:presets', f); res(!!window.BeatPresets); }, 8000);
     });
   }
+  let modeTransition = 0;
   function irA(m, opciones) {
     const o = opciones || {};
     if (!MODOS[m]) m = 'cabina';
     if (m === modo) return;
-    const antes = modo; modo = m;
-    $$('.mode-pane').forEach(p => p.classList.toggle('hidden', p.dataset.mode !== m));
+    const antes = modo, transition = ++modeTransition;
+    modo = m;
+    $$('.mode-pane').forEach(p => {
+      p.classList.add('hidden');
+      p.setAttribute('aria-hidden', 'true');
+      p.classList.remove('is-entering');
+    });
     $$('.mode-tab').forEach(b => {
       const on = b.dataset.modeTab === m;
-      b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1;
+      b.classList.toggle('on', on); b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1;
     });
     const base = $('#panel-beat');
     if (base) base.classList.toggle('hidden', !(base.dataset.showIn || '').split(' ').includes(m));
@@ -97,14 +103,23 @@
     if (m === 'beats') cargarPresets();
     textoModo(m);
     mostrarIntro(m);
-    // Al salir de un modo no queda nada corriendo "a ciegas"
-    if (antes === 'escuela' && window.School && School.stop) School.stop();
-    if (m === 'beats' && antes && S && S.stopAll) S.stopAll();
     actualizarPildora();
     if (PERSISTIR.includes(m)) lsSet('mode', m);
     try { history.replaceState(null, '', location.pathname + location.search + '#' + m); } catch (e) { /* file:// u otro: se ignora */ }
     if (antes && !o.sinScroll) window.scrollTo(0, 0);
-    window.dispatchEvent(new CustomEvent('flowlab:mode', { detail: { mode: m, prev: antes } }));
+    const revealMode = () => {
+      if (transition !== modeTransition) return;
+      const pane = $('#mode-' + m);
+      pane.classList.remove('hidden');
+      pane.setAttribute('aria-hidden', 'false');
+      pane.classList.add('is-entering');
+      setTimeout(() => pane.classList.remove('is-entering'), 350);
+      window.dispatchEvent(new CustomEvent('flowlab:mode', { detail: { mode: m, prev: antes } }));
+    };
+    if (antes) {
+      if (window.FlowLabLoader) window.FlowLabLoader.showMode(m[0].toUpperCase() + m.slice(1), 650);
+      setTimeout(revealMode, 650);
+    } else revealMode();
   }
   function modoInicial() {
     const h = (location.hash || '').slice(1);
@@ -125,6 +140,36 @@
     }));
   }
   pestanas('.mode-tab', b => irA(b.dataset.modeTab));
+  let pulseTarget = null, pulseTimer = 0;
+  document.addEventListener('click', e => {
+    const target = e.target.closest('#btnRecord, #mixPlay, .bt-pad, .bt-play, .bt-fab');
+    if (!target) return;
+    if (pulseTarget) pulseTarget.classList.remove('is-active');
+    clearTimeout(pulseTimer);
+    target.classList.remove('is-active');
+    void target.offsetWidth;
+    target.classList.add('is-active');
+    pulseTarget = target;
+    pulseTimer = setTimeout(() => {
+      target.classList.remove('is-active');
+      pulseTarget = null;
+    }, 650);
+  });
+  document.addEventListener('keydown', e => {
+    const target = e.target;
+    if (target instanceof Element && target.closest('input, textarea, select, [contenteditable="true"]')) return;
+    if (e.altKey && !e.ctrlKey && !e.metaKey && /^[1-3]$/.test(e.key)) {
+      e.preventDefault();
+      irA(['cabina', 'beats', 'escuela'][Number(e.key) - 1]);
+      return;
+    }
+    if (target instanceof Element && target.closest('.mode-tab')) return;
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    const modos = Object.keys(MODOS), i = modos.indexOf(modo);
+    irA(modos[(i + (e.key === 'ArrowRight' ? 1 : -1) + modos.length) % modos.length]);
+  });
   document.addEventListener('click', e => { const b = e.target.closest('[data-mode-go]'); if (b) irA(b.dataset.modeGo); });
   window.addEventListener('hashchange', () => { const h = (location.hash || '').slice(1); if (MODOS[h]) irA(h, { sinScroll: true }); });
 

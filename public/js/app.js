@@ -762,7 +762,7 @@ function buildChain() {
     const c = ctx();
     try {
       if (!c.audioWorklet) throw new Error('sin AudioWorklet');
-      await c.audioWorklet.addModule('./autotune-worklet.js');
+      await c.audioWorklet.addModule('/js/autotune-worklet.js');
       workletOK = true;
     } catch (e) {
       workletOK = false;
@@ -1727,7 +1727,6 @@ $('#beatMute').addEventListener('click', () => { tl.beatMute = !tl.beatMute; upd
 /* ---- Mi beat en la línea de tiempo (solo en el modo Beats) ---- */
 function setBeatLane(on) {
   on = !!on; if (tl.beatOn === on) return;
-  stopAllPlayback();
   tl.beatOn = on; if (!on && tl.solo === 'beat') tl.solo = null;
   $('#tlHeadBeat').classList.toggle('hidden', !on);
   $('#mixPlay').textContent = on ? '▶ Reproducir Mezcla (Base + Beat + Voz)' : '▶ Reproducir Mezcla (Base + Voz)';
