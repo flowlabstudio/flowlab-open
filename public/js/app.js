@@ -601,8 +601,8 @@ function appendLyricLine(text) {
   mainTextarea.scrollTop = mainTextarea.scrollHeight;
   refreshAll();
 }
-let dictRestarts = 0, dictLastStart = 0;
-function stopDictation() { if (dictating) { dictating = false; try { recog.stop(); } catch (e) { } } }
+let dictRestarts = 0, dictLastStart = 0, dictGot = false, dictWatch = 0;
+function stopDictation() { clearTimeout(dictWatch); if (dictating) { dictating = false; try { recog.stop(); } catch (e) { } } }
 $('#btnDictate').addEventListener('click', () => {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { sttStatus('no soportado (usa Chrome, Edge u Opera GX)', 'err'); return; }
@@ -610,7 +610,10 @@ $('#btnDictate').addEventListener('click', () => {
   if (window.School && School.isListening()) School.stopVoice(); // solo un reconocimiento a la vez
   if (!recog) {
     recog = new SR(); recog.lang = 'es-PE'; recog.continuous = true; recog.interimResults = true;
+    recog.onaudiostart = () => sttStatus('micrófono abierto, habla…', 'live');
+    recog.onspeechstart = () => { dictGot = true; clearTimeout(dictWatch); sttStatus('te escucho…', 'live'); };
     recog.onresult = e => {
+      dictGot = true; clearTimeout(dictWatch);
       let interim = '';
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const r = e.results[i], t = r[0].transcript.trim();
@@ -622,18 +625,23 @@ $('#btnDictate').addEventListener('click', () => {
       if (e.error === 'no-speech' || e.error === 'aborted') return;
       // Sin permiso o sin micrófono: se apaga en vez de reintentar en bucle infinito
       if (['not-allowed', 'service-not-allowed', 'audio-capture'].includes(e.error)) dictating = false;
-      sttStatus(e.error === 'not-allowed' ? 'permiso de micrófono denegado' : 'error: ' + e.error, 'err');
+      sttStatus(e.error === 'not-allowed' ? 'permiso de micrófono denegado (candado de la barra → Micrófono → Permitir)'
+        : e.error === 'network' ? 'este navegador no tiene servicio de voz (usa Google Chrome o Edge)'
+        : 'error: ' + e.error, 'err');
     };
     recog.onend = () => {
       // Reinicio automático, con freno si se corta 5 veces seguidas en menos de 1 s (red caída)
       const quick = performance.now() - dictLastStart < 1000;
       dictRestarts = quick ? dictRestarts + 1 : 0;
       if (dictating && dictRestarts < 5) { try { dictLastStart = performance.now(); recog.start(); return; } catch (e) { } }
-      const wasErr = dictating; dictating = false;
-      if (wasErr) sttStatus('se detuvo (revisa tu conexión)', 'err'); else if (!$('#sttStatus').classList.contains('err')) sttStatus('inactivo');
+      const wasErr = dictating; dictating = false; clearTimeout(dictWatch);
+      if (!wasErr && !dictGot && !$('#sttStatus').classList.contains('err')) { sttStatus('no se captó texto (¿micrófono correcto? ¿navegador Chrome?)', 'err'); }
+      else if (wasErr) sttStatus('se detuvo (revisa tu conexión)', 'err'); else if (!$('#sttStatus').classList.contains('err')) sttStatus('inactivo');
       $('#btnDictate').textContent = '🗣 Dictar letra'; $('#btnDictate').classList.remove('on');
     };
   }
+  dictGot = false; clearTimeout(dictWatch);
+  dictWatch = setTimeout(() => { if (dictating && !dictGot) sttStatus(/OPR\/|OPX\//.test(navigator.userAgent) ? 'Opera/GX no trae dictado de voz: usa Google Chrome' : 'no te oigo: revisa el micrófono de Windows o usa Chrome', 'err'); }, 7000);
   try { dictLastStart = performance.now(); dictRestarts = 0; recog.start(); dictating = true; sttStatus('escuchando…', 'live'); $('#btnDictate').textContent = '■ Parar dictado'; $('#btnDictate').classList.add('on'); }
   catch (e) { sttStatus('no se pudo iniciar', 'err'); }
 });

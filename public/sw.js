@@ -9,10 +9,18 @@
    si no hay (o tarda más de 6 s), usa la copia guardada.
    Al publicar una versión nueva, sube el número de VERSION.
    ===================================================================== */
-const VERSION = 'flowlab-v31';
+const VERSION = 'flowlab-v50';
 const CORE = [
   './', 'css/styles.css', 'css/legal.css',
   'js/loader.js', 'js/app.js', 'js/autotune-worklet.js', 'js/freestyle-data.js', 'js/freestyle-school.js', 'js/cabina.js', 'js/beats.js', 'js/presets.js', 'js/help.js', 'js/glosario.js', 'js/ai-coach.js', 'js/i18n.js', 'js/pwa.js',
+  'burbuja-ia.js', 'graffiti.js', 'feedback.js', 'inicio.js', 'escuela-ia.js', 'editor-voz.js', 'rapear-imagenes.js', 'tema-elite.css',
+  'assets/img/hero.webp', 'assets/img/hero-2.webp', 'assets/img/genre-trap.webp', 'assets/img/genre-boombap.webp', 'assets/img/genre-reggaeton.webp',
+  'assets/img/rap/rap-1.webp', 'assets/img/rap/rap-2.webp', 'assets/img/rap/rap-3.webp', 'assets/img/rap/rap-4.webp',
+  'assets/img/rap/rap-5.webp', 'assets/img/rap/rap-6.webp', 'assets/img/rap/rap-7.webp', 'assets/img/rap/rap-8.webp',
+  'assets/img/rap/rap-9.webp', 'assets/img/rap/rap-10.webp', 'assets/img/rap/rap-11.webp', 'assets/img/rap/rap-12.webp',
+  'assets/bases/cold-steel-keys.mp3', 'assets/bases/dembow-heat.mp3', 'assets/bases/dusty-keys.mp3', 'assets/bases/fiesta-dembow.mp3',
+  'assets/bases/guitarra-verano.mp3', 'assets/bases/midnight-rhodes.mp3', 'assets/bases/midnight-slideway.mp3', 'assets/bases/noche-sensual.mp3',
+  'assets/bases/sombra-nocturna.mp3', 'assets/bases/velocidad-maxima.mp3',
   'assets/fonts/inter-latin-wght.woff2',
   'manifest.json', 'favicon.ico', 'apple-touch-icon.png', 'privacidad.html', '404.html',
   'assets/logo.svg', 'assets/loader-flowlab.png', 'assets/silencio.mp3', 'assets/icon-192.png', 'assets/icon-512.png', 'assets/icon-maskable-512.png'

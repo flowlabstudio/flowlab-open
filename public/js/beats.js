@@ -986,8 +986,29 @@
   }
   // Dibuja un ritmo de la casa SIN tocar tu patrón ni la pantalla de Beats (lo usan la Cabina y la Escuela).
   // bpm opcional: el beat es sintético, así que su tempo se cambia sin perder calidad. bars se redondea a un múltiplo del patrón.
+  // ---- Bases profesionales (MP3): se decodifican una vez y, si hace falta, se aceleran/frenan al BPM pedido ----
+  const proCache = {};
+  async function decodePro(url) {
+    if (proCache[url]) return proCache[url];
+    proCache[url] = (async () => {
+      const ab = await (await fetch(url)).arrayBuffer();
+      const oc = new OfflineAudioContext(2, 44100, 44100);
+      return oc.decodeAudioData(ab);
+    })();
+    try { return await proCache[url]; } catch (e) { delete proCache[url]; throw e; }
+  }
+  async function renderPro(it, bpm) {
+    const BP = window.BeatPresets, src = await decodePro(it.audio), tgt = bpm ? clamp(Math.round(bpm), 40, 240) : it.bpm, ratio = tgt / it.bpm;
+    let buf = src;
+    if (Math.abs(ratio - 1) > 0.01) {
+      const len = Math.ceil(src.length / ratio), oc = new OfflineAudioContext(src.numberOfChannels, len, src.sampleRate), s = oc.createBufferSource();
+      s.buffer = src; s.playbackRate.value = ratio; s.connect(oc.destination); s.start(); buf = await oc.startRendering();
+    }
+    return { buf, item: it, bpm: tgt, bars: Math.round(buf.duration / (4 * 60 / tgt)), kit: '', nombre: it.n + ' · ' + BP.GENEROS.find(g => g.id === it.g).n + ' · ' + tgt + ' BPM' };
+  }
   async function renderPreset(id, bars, bpm) {
-    const BP = window.BeatPresets, it = BP && BP.items.find(x => x.id === id); if (!it) return null;
+    const BP = window.BeatPresets, pro = BP && BP.pro && BP.pro.find(x => x.id === id); if (pro) return renderPro(pro, bpm);
+    const it = BP && BP.items.find(x => x.id === id); if (!it) return null;
     const x = sanitize(BP.aEstado(it)); if (!x) return null;
     if (bpm) x.bpm = clamp(Math.round(bpm), 40, 240);
     const per = x.steps / 16, n = Math.max(per, Math.ceil((bars || per) / per) * per);

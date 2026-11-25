@@ -96,6 +96,7 @@
     });
     const base = $('#panel-beat');
     if (base) base.classList.toggle('hidden', !(base.dataset.showIn || '').split(' ').includes(m));
+    document.querySelectorAll('.hero-strip').forEach(h => h.classList.toggle('hidden', !(h.dataset.showIn || '').split(' ').includes(m)));
     // La línea de tiempo es UNA sola: en Beats se muestra en su ranura (con la pista "Mi beat"); en Cabina vuelve a la suya
     const tlp = $('#panel-timeline'), ranura = $(m === 'beats' ? '#slotTlBeats' : '#slotTlCabina');
     if (tlp && ranura && tlp.parentElement !== ranura) ranura.appendChild(tlp);
@@ -201,7 +202,7 @@
     });
     $('#houseTag').textContent = (BP.GENEROS.find(g => g.id === casaGenero) || {}).tag || '';
     houseCards.textContent = '';
-    BP.items.filter(x => x.g === casaGenero).forEach(it => {
+    BP.pro.filter(x => x.g === casaGenero).forEach(it => {
       const c = document.createElement('button'); c.type = 'button'; c.className = 'bt-card' + (it.id === casaActual ? ' cur' : ''); c.dataset.id = it.id;
       c.setAttribute('aria-label', 'Usar el beat ' + it.n + ' como base, ' + it.bpm + ' BPM');
       const b = document.createElement('b'); b.textContent = it.n; const s = document.createElement('small'); s.textContent = it.bpm + ' BPM' + (it.steps === 32 ? ' · 2 compases' : '');
