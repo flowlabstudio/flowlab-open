@@ -186,7 +186,8 @@
     else return;
     pop.innerHTML = '<b></b><span></span><em></em>';
     let ej = EJEMPLO[t] || ejExtra, pre = 'Ejemplo: ';
-    const en = window.I18n && I18n.ayuda(t);   // inglés (solo las ayudas principales; el resto queda en español)
+    const E = window.AyudasEN && AyudasEN.activo() ? AyudasEN : null;   // inglés: por clave (juegos, rondas, tomas) o por título
+    const en = (E && (E.claves[btn.dataset.help] || E.titulos[t])) || (window.I18n && I18n.ayuda(t));
     if (en) { t = en[0]; d = en[1]; ej = en[2]; pre = 'Example: '; }
     pop.children[0].textContent = t; pop.children[1].textContent = d;
     pop.children[2].textContent = ej ? pre + ej : ''; pop.children[2].hidden = !ej;
@@ -216,6 +217,8 @@
   window.addEventListener('resize', hide);
 
   inject();
+  // Al cambiar de idioma se reescriben algunos textos y se llevan su "?": se vuelven a poner
+  window.addEventListener('flowlab:lang', () => { hide(); setTimeout(inject, 0); });
   // Algunas zonas se redibujan (reto del día, progreso): se vuelven a poner sus "?" si faltan
   let t = null;
   const mo = new MutationObserver(() => { clearTimeout(t); t = setTimeout(inject, 80); });
