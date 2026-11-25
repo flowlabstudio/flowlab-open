@@ -60,32 +60,37 @@
   ];
   const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   const orden = TERMINOS.slice().sort((a, b) => a[0].localeCompare(b[0], 'es'));
-  const indice = orden.map(t => norm(t.join(' ')));
 
   const btn = document.getElementById('btnGlosario');
   if (!btn) return;
   let dlg = null, lastFocus = null;
   function construir() {
+    const E = window.AyudasEN && AyudasEN.activo() ? AyudasEN.glosario : null;
+    const tx = (es, en) => (E ? en : es);
+    // [término, explicación, ejemplo, texto donde busca] en el idioma elegido
+    const filas = orden.map(t => { const e = E && E[t[0]]; return e ? [e[0], e[1], e[2], t.join(' ') + ' ' + e.join(' ')] : [t[0], t[2], t[3], t.join(' ')]; });
+    if (E) filas.sort((a, b) => a[0].localeCompare(b[0], 'en'));
+    const indice = filas.map(f => norm(f[3]));
     dlg = document.createElement('div'); dlg.id = 'glosario'; dlg.className = 'glos hidden'; dlg.setAttribute('role', 'dialog'); dlg.setAttribute('aria-modal', 'true'); dlg.setAttribute('aria-labelledby', 'glosTitulo');
     const caja = document.createElement('div'); caja.className = 'glos-box';
     const cab = document.createElement('div'); cab.className = 'glos-head';
-    const h = document.createElement('h2'); h.id = 'glosTitulo'; h.textContent = 'Glosario / Ayuda';
-    const x = document.createElement('button'); x.type = 'button'; x.className = 'btn btn-ghost btn-small glos-close'; x.id = 'glosCerrar'; x.textContent = 'Cerrar ✕'; x.setAttribute('aria-label', 'Cerrar el glosario');
+    const h = document.createElement('h2'); h.id = 'glosTitulo'; h.textContent = tx('Glosario / Ayuda', 'Glossary / Help');
+    const x = document.createElement('button'); x.type = 'button'; x.className = 'btn btn-ghost btn-small glos-close'; x.id = 'glosCerrar'; x.textContent = tx('Cerrar ✕', 'Close ✕'); x.setAttribute('aria-label', tx('Cerrar el glosario', 'Close the glossary'));
     cab.append(h, x);
-    const buscar = document.createElement('input'); buscar.type = 'search'; buscar.id = 'glosBuscar'; buscar.placeholder = 'Busca una palabra: BPM, swing, delay…'; buscar.autocomplete = 'off'; buscar.setAttribute('aria-label', 'Buscar en el glosario'); buscar.maxLength = 40;
+    const buscar = document.createElement('input'); buscar.type = 'search'; buscar.id = 'glosBuscar'; buscar.placeholder = tx('Busca una palabra: BPM, swing, delay…', 'Search a word: BPM, swing, delay…'); buscar.autocomplete = 'off'; buscar.setAttribute('aria-label', tx('Buscar en el glosario', 'Search the glossary')); buscar.maxLength = 40;
     const cuenta = document.createElement('p'); cuenta.className = 'glos-count'; cuenta.id = 'glosCuenta'; cuenta.setAttribute('role', 'status'); cuenta.setAttribute('aria-live', 'polite');
     const lista = document.createElement('dl'); lista.className = 'glos-list'; lista.id = 'glosLista';
-    orden.forEach((t, i) => {
+    filas.forEach((t, i) => {
       const dt = document.createElement('dt'); dt.textContent = t[0];
-      const dd = document.createElement('dd'); const p1 = document.createElement('span'); p1.textContent = t[2]; const p2 = document.createElement('em'); p2.textContent = 'Ejemplo: ' + t[3]; dd.append(p1, p2);
+      const dd = document.createElement('dd'); const p1 = document.createElement('span'); p1.textContent = t[1]; const p2 = document.createElement('em'); p2.textContent = tx('Ejemplo: ', 'Example: ') + t[2]; dd.append(p1, p2);
       dt.dataset.i = i; dd.dataset.i = i; lista.append(dt, dd);
     });
-    const vacio = document.createElement('p'); vacio.className = 'glos-vacio hidden'; vacio.id = 'glosVacio'; vacio.textContent = 'No encontré esa palabra. Prueba con otra, por ejemplo "ritmo" o "voz".';
+    const vacio = document.createElement('p'); vacio.className = 'glos-vacio hidden'; vacio.id = 'glosVacio'; vacio.textContent = tx('No encontré esa palabra. Prueba con otra, por ejemplo "ritmo" o "voz".', 'Word not found. Try another one, like "beat" or "voice".');
     caja.append(cab, buscar, cuenta, lista, vacio); dlg.append(caja); document.body.appendChild(dlg);
     const filtrar = () => {
       const q = norm(buscar.value.trim()); let n = 0;
       lista.querySelectorAll('dt,dd').forEach(e => { const ok = !q || indice[+e.dataset.i].includes(q); e.classList.toggle('hidden', !ok); if (ok && e.tagName === 'DT') n++; });
-      vacio.classList.toggle('hidden', n > 0); cuenta.textContent = n + (n === 1 ? ' término' : ' términos');
+      vacio.classList.toggle('hidden', n > 0); cuenta.textContent = n + (n === 1 ? tx(' término', ' term') : tx(' términos', ' terms'));
     };
     buscar.addEventListener('input', filtrar); filtrar();
     x.addEventListener('click', cerrar);
@@ -109,5 +114,7 @@
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
   btn.addEventListener('click', () => { if (dlg && !dlg.classList.contains('hidden')) cerrar(); else abrir(); });
+  // Al cambiar de idioma se vuelve a construir
+  window.addEventListener('flowlab:lang', () => { if (dlg) { cerrar(); dlg.remove(); dlg = null; } });
   window.Glosario = { abrir, cerrar, terminos: () => orden.map(t => t[0]) };
 })();

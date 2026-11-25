@@ -186,7 +186,8 @@
     else return;
     pop.innerHTML = '<b></b><span></span><em></em>';
     let ej = EJEMPLO[t] || ejExtra, pre = 'Ejemplo: ';
-    const en = window.I18n && I18n.ayuda(t);   // inglés (solo las ayudas principales; el resto queda en español)
+    const E = window.AyudasEN && AyudasEN.activo() ? AyudasEN : null;   // inglés: por clave (juegos, rondas, tomas) o por título
+    const en = (E && (E.claves[btn.dataset.help] || E.titulos[t])) || (window.I18n && I18n.ayuda(t));
     if (en) { t = en[0]; d = en[1]; ej = en[2]; pre = 'Example: '; }
     pop.children[0].textContent = t; pop.children[1].textContent = d;
     pop.children[2].textContent = ej ? pre + ej : ''; pop.children[2].hidden = !ej;
