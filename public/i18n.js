@@ -39,7 +39,7 @@
     { s: '#moreVoz > summary', k: 'tn', en: 'More options · test sound and microphone, clear history' },
     // ---- Beats ----
     { s: '.beats-title', k: 'tn', en: 'Build. Try. Refine.' },
-    { s: '#btGenresTitle', k: 'tn', en: 'Pick a rhythm and make it yours' }, { s: '#btPadsTitle', k: 'tn', en: '1 · Play the pads' },
+    { s: '#btGenresTitle', k: 'tn', en: 'Pick your beat' }, { s: '.bt-sub', k: 'tn', en: 'Full tracks to rap over and rhythms to build your own.' },{ s: '#btPadsTitle', k: 'tn', en: '1 · Play the pads' },
     { s: '#btSeqTitle', k: 'tn', en: '2 · Build your pattern' }, { s: '#btTrackTitle', k: 'tn', en: '3 · Your track · use or download your beat' },
     { s: '#moreFxBeats > summary', k: 'tn', en: 'More options · Add flavor (vinyl, filter, saturation)' },
     { s: '#moreMine > summary', k: 'tn', en: 'More options · Saved beats' },
@@ -78,7 +78,7 @@
     'Subir mi MP3 / WAV': ['Upload my MP3 / WAV', 'Pick or drag an MP3/WAV file. It stays in your browser; it is not uploaded anywhere.', 'Drag your beat.mp3 onto the box.'],
     'Armar beat rápido': ['Quick beat builder', 'Takes you to Beats mode to make your own rhythm with pads, without searching for a beat.', 'Tap a trap rhythm and use it in the Booth.'],
     'Base activa': ['Active base', 'The base is the background music (the "beat") you record over and practice with. Here you see which one is loaded.', 'Base: my-beat.mp3.'],
-    'Ritmos listos': ['Ready rhythms', 'Pick a genre and tap a rhythm: its pattern, tempo, kit, swing and effects load at once.', 'Trap → "Midnight" at 140 BPM.'],
+    'Bases completas': ['Full tracks', 'Pick a genre, listen to a track and press "Rap over this": it goes to the Booth so you can record over it. Below you can build your own pad pattern; "Surprise me" invents one.', 'Trap → "Sombra Nocturna" → "Rap over this".'],
     'Pads': ['Pads', 'Each pad is an instrument. Play them with the mouse, your finger or the keys Q W E R / A S D F.', 'Press Q for the kick.'],
     'Tempo': ['Tempo', 'The speed of the beat in beats per minute (BPM). Boom bap ≈ 85-95, trap ≈ 130-160.', '90 BPM feels relaxed; 140 feels fast.'],
     'Secuenciador': ['Sequencer', 'Each row is an instrument and each square is one step of the bar. Tap to turn it on or off.', 'Turn on steps 1 and 9 of the kick row.'],

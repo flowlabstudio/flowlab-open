@@ -15,7 +15,7 @@
     ['#beatQuick .bc-head b', 'Armar beat rápido', 'Te lleva al modo Beats para crear tu propio ritmo con pads, sin buscar música en ningún lado.'],
     ['#panel-beat .base-info .hint', 'Base activa', 'La base es la música de fondo (el "beat") sobre la que grabas y entrenas. Arriba ves cuál está lista ahora: YouTube, tu archivo o, pronto, un beat hecho aquí.'],
     // ---- Beats ----
-    ['#btGenresTitle', 'Ritmos listos', 'Elige un género y toca un ritmo: se cargan el patrón, el tempo, el kit, el swing y los efectos. Después cambia lo que quieras (todo se puede editar) y guárdalo en Mis beats. "Sorpréndeme" elige uno al azar del género elegido; "Libre" inventa un patrón desde cero.'],
+    ['#btGenresTitle', 'Bases completas', 'Elige un género, escucha una base y pulsa "Rapear con esta": queda en la Cabina para grabar tu voz encima. Abajo puedes armar tu propio patrón con los pads; "Sorpréndeme" inventa uno.'],
     ['#btPadsTitle', 'Pads', 'Cada pad es un instrumento. Tócalos con el mouse, con el dedo o con las teclas Q W E R / A S D F para probar sonidos y sentir el ritmo.'],
     ['#btTempoLbl', 'Tempo', 'La velocidad del beat en golpes por minuto (BPM). Boom bap ≈ 85-95, trap ≈ 130-160. Usa − y + o escribe el número (60 a 180).'],
     ['label[for=btSwing]', 'Swing', 'Hace que los pasos pares lleguen un poquito tarde, como un baterista humano. 0% = recto como una máquina; 50% o más = balanceo marcado.'],
@@ -97,7 +97,7 @@
     'Subir mi MP3 / WAV': 'Un beat que compraste, como "trap_140.mp3".',
     'Armar beat rápido': 'No tienes beat: pulsa aquí, elige Trap y úsalo en la Cabina.',
     'Base activa': '"Base activa: Beat propio · Medianoche · Trap · 140 BPM".',
-    'Ritmos listos': 'Reggaetón → "Perreo Intenso": ya trae tempo, kit y patrón.',
+    'Bases completas': 'Trap → "Sombra Nocturna" → "Rapear con esta".',
     'Pads': 'Toca la tecla Q para oír el primer instrumento y W para el segundo.',
     'Tempo': '90 para un boom bap tranquilo, 140 para un trap.',
     'Swing': '0% suena a máquina; 58% suena a boom bap de los 90.',
