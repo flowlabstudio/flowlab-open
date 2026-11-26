@@ -22,10 +22,11 @@ Open it with the **🤖 AI Coach** button (also **Improve with AI** under the ly
 |---|---|---|
 | **Improve my lyrics** | 4–16 lines in → possible internal rhymes, lines with very uneven syllable counts, 3 ideas to continue, an optional improved version | Structured JSON (schema), rendered as sections |
 | **Vent with AI** | Pick an emotion → 5 words, 3 images, a verse opener. Nothing is saved | Structured JSON (schema) |
+| **1 vs 1 battle** (School) | A rival line + your bar with a required word → the AI answers with 2 bars and one coaching tip; its answer is your next challenge. Falls back to a built-in phrase bank when no AI is available | Structured JSON (schema) |
 
 ### How Firebase AI Logic hybrid is used
 
-All the code is in [`public/ai-coach.js`](public/ai-coach.js) (an ES module).
+All the code is in [`public/ai-coach.js`](public/ai-coach.js) (an ES module). The battle screen ([`public/burbuja-ia.js`](public/burbuja-ia.js)) calls the same hybrid function through `window.Coach.rival()`.
 
 1. **Lazy loading.** The Firebase SDK (v13.4.0, hybrid needs ≥ 12.5.0) is imported with `import()` from `https://www.gstatic.com/firebasejs/13.4.0/…` only when the user presses *Generate* inside the Coach. The page works exactly the same if it is never opened, or if the SDK cannot be loaded (offline).
 2. **Hybrid model.**
@@ -52,7 +53,7 @@ All the code is in [`public/ai-coach.js`](public/ai-coach.js) (an ES module).
 
 - **Booth** – write lyrics (rhyme finder, syllable counter), record over a YouTube link, an MP3/WAV or a FlowLab track, with Auto-Tune (AudioWorklet, PSOLA), effects, a voice-take editor (zoom, trim, cut, fades, normalize), mixing and WAV export.
 - **Beats** – 10 full backing tracks in 5 genres to rap over, plus a Web Audio pad grid and step sequencer (6 kits, WAV export).
-- **School** – 18 freestyle games (Univocal, Relámpago, Cadena 4x4, Minuto libre…), BPM/TAP, voice verification (beta), XP and ranks, a 1 vs 1 practice battle (built-in phrase bank), image prompts to rap over and instant offline hints.
+- **School** – 18 freestyle games (Univocal, Relámpago, Cadena 4x4, Minuto libre…), BPM/TAP, voice verification (beta), XP and ranks, a 1 vs 1 battle against the AI, image prompts to rap over and instant offline hints.
 - **Graffiti** mode to draw over the studio and save it.
 - **PWA** with offline support (full tracks need a connection to load), Spanish/English interface, glossary and "?" help in both languages. The freestyle word banks and rhyme engine are in Spanish.
 
@@ -63,7 +64,7 @@ The app existed before as a private project. During the contest period we added:
 - the **AI Coach** with Firebase AI Logic hybrid inference (on-device first, cloud fallback) and App Check;
 - the two Coach features above, with schema-constrained JSON output and content/safety rules (including the crisis path that never calls the AI);
 - an **ES / EN interface** (`public/i18n.js`, `i18n-en.js`, `i18n-ayudas.js`) with browser-language suggestion;
-- full backing tracks, the practice battle, image prompts, offline hints, the voice-take editor and graffiti mode;
+- full backing tracks, the AI battle, image prompts, offline hints, the voice-take editor and graffiti mode;
 - a tightened **CSP** and an updated **privacy page** that explains exactly what leaves the device and when;
 - this open-source edition (commercial plans, analytics and personal data removed).
 
@@ -98,7 +99,7 @@ npm i -g playwright          # once; the script uses the installed Chrome
 node tests/coach.smoke.js
 ```
 
-The smoke test replaces the Firebase SDK with a fake module (no network, no keys) and checks lazy loading, the privacy notice, the structured result, the "on-device / cloud" badge, request limits, the crisis path, safe rendering and the ES/EN switch.
+The smoke test replaces the Firebase SDK with a fake module (no network, no keys) and checks lazy loading, the privacy notice, the structured result, the "on-device / cloud" badge, request limits, the crisis path, safe rendering, the 1 vs 1 battle and the ES/EN switch.
 
 ## Known limits
 
@@ -107,7 +108,7 @@ The smoke test replaces the Firebase SDK with a fake module (no network, no keys
 - Firebase AI Monitoring shows no data for on-device requests (documented SDK behavior).
 - App Check on a real site needs a reCAPTCHA Enterprise key (not included).
 - Voice verification uses the browser's SpeechRecognition (beta; audio handling depends on the browser vendor).
-- Only the lyrics coach and the venting helper call a generative model. The freestyle games, the practice battle and the school hints are rule-based and work without it.
+- The lyrics coach, the venting helper and the 1 vs 1 battle call a generative model. The freestyle games and the school hints are rule-based and work without it.
 
 ## License
 
