@@ -139,3 +139,17 @@ html[data-tema=claro] .gc-svg{color:#5C6B00}
 .bt-pro-card audio{width:100%;height:36px}
 .bt-pro-card .btn{align-self:flex-start;min-height:44px}
 .bt-pro-msg:empty{display:none}
+
+/* Batalla 1 vs 1 con la IA */
+.bia-line{white-space:pre-line}
+.bia-input{width:100%;box-sizing:border-box;resize:vertical;min-height:64px;padding:12px;border-radius:var(--radius-sm);border:1px solid var(--line-2);background:var(--surface-2);color:var(--txt);font:600 16px/1.4 inherit;font-family:inherit}
+.bia-input:focus-visible{outline:2px solid var(--lime);outline-offset:1px}
+.bia-status{margin:0;font-size:13px;color:var(--orange-ink)}.bia-status:empty{display:none}
+.bia-res{display:flex;flex-direction:column;gap:8px}.bia-res:empty{display:none}
+.bia-check{margin:0;font-size:13px;color:var(--muted)}
+.bia-reply{display:flex;flex-direction:column;gap:8px;padding:14px;border:1px solid var(--line-2);border-left:4px solid var(--lime);border-radius:var(--radius-sm);background:var(--surface-2)}
+.bia-reply .bia-line{font-size:19px}
+.bia-badge{margin:0;font-size:12px;font-weight:700;color:var(--cyan)}
+.bia-tip{margin:0;font-size:13px;color:var(--muted);line-height:1.5}
+.bia-aviso{display:flex;flex-direction:column;gap:8px;align-items:flex-start;padding:12px;border:1px solid var(--line-2);border-radius:var(--radius-sm)}
+.bia-aviso p{margin:0;font-size:13px;line-height:1.5}

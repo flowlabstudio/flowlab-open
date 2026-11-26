@@ -1,23 +1,33 @@
-/* FlowLab · burbuja de IA flotante + Batalla 1 vs 1 contra la IA (sin servidor).
-   La burbuja abre el Coach (ai-coach.js) y la Batalla. La Batalla usa un banco de frases
-   propio: nunca llama a la nube, funciona sin internet y las rondas no se repiten. */
+/* FlowLab · Batalla 1 vs 1 contra la IA.
+   El rival abre con una frase, tú respondes con tu barra y la palabra obligada, y la IA te contesta
+   dos barras y un consejo (Coach.rival en ai-coach.js: Firebase AI Logic híbrido, primero en tu
+   dispositivo y si no en la nube). Su respuesta es la frase de la ronda siguiente. Si no hay IA
+   (sin internet y sin modelo local), la batalla sigue con un banco de frases propio y lo dice. */
 (function () {
   'use strict';
   const EN = () => /^en/i.test(document.documentElement.lang || '');
   const T = {
     es: {
-      bubble: 'Ayuda con IA', menuTitle: '¿Qué quieres?', coach: '🤖 Coach: mejorar mi letra', battle: '⚔️ Batalla 1 vs 1 con la IA',
-      tip: 'Idea: ', close: 'Cerrar', next: 'Listo, siguiente ronda ▶', other: '↻ Otra frase', start: 'Empezar batalla',
-      round: 'Ronda', of: 'de', word: 'Palabra obligada', answer: 'Responde rapeando (en voz alta o escribiendo). Tienes ', sec: ' s.',
-      intro: 'La IA no tiene voz: te lanza una frase. Tú le contestas con tu flow y usando la palabra obligada.',
-      end: '¡Batalla terminada! Respiraste, rimaste y no te rendiste. ¿Otra?', again: 'Otra batalla', name: 'IA'
+      battle: '⚔️ Batalla 1 vs 1 con la IA', close: 'Cerrar',
+      intro: 'El rival te lanza una frase. Contesta con tu barra usando la palabra obligada y la IA te responde, en tu dispositivo si se puede.',
+      round: 'Ronda', of: 'de', word: 'Palabra obligada', rival: 'Rival', bank: 'frase de arranque (sin IA)', name: 'IA',
+      answer: 'Rapéala en voz alta y escríbela. Tienes ', sec: ' s.', ph: 'Tu barra…', label: 'Tu barra',
+      send: 'Que responda la IA ▶', other: '↻ Otra frase', skip: 'Saltar sin IA', next: 'Siguiente ronda ▶', finish: 'Terminar ▶',
+      short: 'Escribe tu barra (al menos 3 palabras).', thinking: 'El rival está pensando…',
+      used: '✓ Usaste la palabra obligada.', missed: '✗ Te faltó la palabra obligada.', reply: 'La IA contesta', tip: 'Consejo: ',
+      noai: 'Puedes seguir con una frase del banco.',
+      end: '¡Batalla terminada! Respiraste, rimaste y no te rendiste. ¿Otra?', again: 'Otra batalla'
     },
     en: {
-      bubble: 'AI help', menuTitle: 'What do you need?', coach: '🤖 Coach: improve my lyrics', battle: '⚔️ 1 vs 1 battle with the AI',
-      tip: 'Idea: ', close: 'Close', next: 'Done, next round ▶', other: '↻ Another line', start: 'Start battle',
-      round: 'Round', of: 'of', word: 'Required word', answer: 'Reply by rapping (out loud or typing). You have ', sec: ' s.',
-      intro: 'The AI has no voice: it throws you a line. You answer with your flow and use the required word.',
-      end: 'Battle over! You breathed, rhymed and kept going. Another one?', again: 'Another battle', name: 'AI'
+      battle: '⚔️ 1 vs 1 battle with the AI', close: 'Close',
+      intro: 'Your rival throws a line. Answer with your bar using the required word and the AI replies, on your device when possible.',
+      round: 'Round', of: 'of', word: 'Required word', rival: 'Rival', bank: 'opening line (no AI)', name: 'AI',
+      answer: 'Rap it out loud and type it. You have ', sec: ' s.', ph: 'Your bar…', label: 'Your bar',
+      send: 'Let the AI answer ▶', other: '↻ Another line', skip: 'Skip without AI', next: 'Next round ▶', finish: 'Finish ▶',
+      short: 'Type your bar (at least 3 words).', thinking: 'Your rival is thinking…',
+      used: '✓ You used the required word.', missed: '✗ You missed the required word.', reply: 'The AI answers', tip: 'Tip: ',
+      noai: 'You can keep going with a line from the bank.',
+      end: 'Battle over! You breathed, rhymed and kept going. Another one?', again: 'Another battle'
     }
   };
   const L = () => T[EN() ? 'en' : 'es'];
@@ -60,7 +70,7 @@
       'microphone', 'heart', 'corner', 'storm', 'hill', 'beach', 'bike', 'notebook', 'rooster', 'money', 'patience', 'door', 'train', 'trap', 'star', 'window',
       'sandwich', 'ball', 'teacher', 'track', 'kite', 'root', 'volcano', 'secret']
   };
-  const RONDAS = 6, SEG = 25;
+  const RONDAS = 6, SEG = 40;
 
   /* Bolsa mezclada: no repite hasta agotar el banco; guarda lo usado para no repetir entre batallas. */
   function bolsa(lista, clave) {
@@ -73,78 +83,96 @@
     try { localStorage.setItem(clave, JSON.stringify(usados)); } catch (e) { }
     return lista[i];
   }
-  const nuevaFrase = () => { const l = EN() ? 'en' : 'es'; return { f: bolsa(FRASES[l], 'flowlab_bia_f_' + l), p: bolsa(PALABRAS[l], 'flowlab_bia_p_' + l) }; };
+  const idioma = () => (EN() ? 'en' : 'es');
+  const nuevaPalabra = () => bolsa(PALABRAS[idioma()], 'flowlab_bia_p_' + idioma());
+  const nuevaFrase = () => ({ f: bolsa(FRASES[idioma()], 'flowlab_bia_f_' + idioma()), p: nuevaPalabra(), donde: '' });   // donde vacío = del banco
 
   function el(tag, cls, txt) { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+  function boton(cls, txt, fn) { const b = el('button', 'btn ' + cls, txt); b.type = 'button'; b.addEventListener('click', fn); return b; }
+  const llana = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
-  let bubble, menu, dlg, ronda = 0, cur = null, timer = 0, resto = 0, lastFocus = null;
+  let dlg, ronda = 0, cur = null, timer = 0, resto = 0, lastFocus = null, turno = 0;
 
   function pararReloj() { clearInterval(timer); timer = 0; }
   function cerrarBatalla() {
-    pararReloj(); if (!dlg) return;
+    pararReloj(); turno++; if (!dlg) return;
     dlg.classList.add('hidden'); document.body.classList.remove('glos-abierto');
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
+  // Pasa a la ronda siguiente: con la respuesta de la IA como frase, o con una del banco
+  function siguiente(deIA) {
+    ronda++; cur = deIA ? { f: deIA.barras.join('\n'), p: nuevaPalabra(), donde: deIA.donde } : null; pintarRonda();
+    const i = dlg.querySelector('.bia-input'); if (i) i.focus();
+  }
   function pintarRonda() {
-    const t = L(), body = dlg.querySelector('.bia-body'); body.textContent = '';
+    const t = L(), body = dlg.querySelector('.bia-body'); body.textContent = ''; pararReloj(); turno++;
     if (ronda > RONDAS) {
-      body.append(el('p', 'bia-end', t.end));
-      const b = el('button', 'btn btn-neon', t.again); b.type = 'button'; b.addEventListener('click', () => { ronda = 0; siguiente(); });
-      body.append(b); return;
+      body.append(el('p', 'bia-end', t.end), boton('btn-neon', t.again, () => { ronda = 0; siguiente(); }));
+      return;
     }
     cur = cur || nuevaFrase();
     body.append(el('div', 'bia-round', t.round + ' ' + ronda + ' ' + t.of + ' ' + RONDAS));
-    body.append(el('div', 'bia-who', '🤖 ' + t.name));
+    body.append(el('div', 'bia-who', cur.donde ? '🤖 ' + t.name + ' · ' + cur.donde : '🥊 ' + t.rival + ' · ' + t.bank));
     body.append(el('p', 'bia-line', '“' + cur.f + '”'));
     const w = el('p', 'bia-word'); w.append(t.word + ': ', el('b', null, cur.p)); body.append(w);
     const c = el('p', 'bia-clock'); body.append(c);
     const pintaReloj = () => { c.textContent = t.answer + resto + t.sec; };
-    pararReloj(); resto = SEG; pintaReloj();
+    resto = SEG; pintaReloj();
     timer = setInterval(() => { resto = Math.max(0, resto - 1); pintaReloj(); if (!resto) pararReloj(); }, 1000);
+    const ta = el('textarea', 'bia-input'); ta.rows = 2; ta.maxLength = 200; ta.placeholder = t.ph; ta.setAttribute('aria-label', t.label); ta.spellcheck = false;
+    const estado = el('p', 'bia-status'); estado.setAttribute('role', 'status'); estado.setAttribute('aria-live', 'polite');
+    const res = el('div', 'bia-res');
     const fila = el('div', 'bia-actions');
-    const o = el('button', 'btn btn-ghost', t.other); o.type = 'button'; o.addEventListener('click', () => { cur = nuevaFrase(); pintarRonda(); });
-    const n = el('button', 'btn btn-neon', t.next); n.type = 'button'; n.addEventListener('click', siguiente);
-    fila.append(o, n); body.append(fila);
+    const enviar = boton('btn-neon bia-send', t.send, () => pedir(ta, estado, res, fila));
+    if (!cur.donde) fila.append(boton('btn-ghost', t.other, () => { cur = nuevaFrase(); pintarRonda(); }));
+    fila.append(boton('btn-ghost bia-skip', t.skip, () => siguiente()), enviar);
+    ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); enviar.click(); } });
+    body.append(ta, estado, res, fila);
   }
-  function siguiente() { ronda++; cur = null; pintarRonda(); }
+  async function pedir(ta, estado, res, fila) {
+    const t = L(), barra = ta.value.trim();
+    if (barra.split(/\s+/).filter(Boolean).length < 3) { estado.textContent = t.short; ta.focus(); return; }
+    if (!window.Coach || !window.Coach.rival) { estado.textContent = t.noai; return; }
+    pararReloj(); const mio = ++turno, botones = [...fila.querySelectorAll('button')];
+    botones.forEach(b => { b.disabled = true; }); estado.textContent = t.thinking; res.textContent = '';
+    const r = await window.Coach.rival({ barra, anterior: cur.f, palabra: cur.p });
+    if (mio !== turno) return;                                   // cerraron o cambiaron de ronda mientras tanto
+    botones.forEach(b => { b.disabled = false; }); estado.textContent = '';
+    if (r.aviso) {                                               // aviso de privacidad antes del primer envío
+      const av = el('div', 'bia-aviso'); av.append(el('p', null, r.aviso), boton('btn-gold', r.boton, () => { window.Coach.aceptar(); pedir(ta, estado, res, fila); }));
+      res.append(av); return;
+    }
+    if (r.crisis) { res.append(el('p', 'coach-crisis', r.crisis)); return; }
+    if (r.error) { estado.textContent = r.error + (r.espera ? '' : ' ' + t.noai); return; }
+    ta.readOnly = true;
+    res.append(el('p', 'bia-check', llana(barra).includes(llana(cur.p)) ? t.used : t.missed));
+    const caja = el('div', 'bia-reply'); caja.append(el('div', 'bia-who', '🤖 ' + t.reply), el('p', 'bia-line', r.barras.join('\n')));
+    const donde = el('p', 'bia-badge', r.donde); donde.dataset.fuente = r.fuente; caja.append(donde);
+    if (r.consejo) caja.append(el('p', 'bia-tip', t.tip + r.consejo));
+    res.append(caja); fila.textContent = '';
+    const sigue = boton('btn-neon bia-next', ronda >= RONDAS ? t.finish : t.next, () => siguiente(r));
+    fila.append(sigue); sigue.focus();
+  }
   function abrirBatalla() {
     const t = L();
     if (!dlg) {
-      dlg = el('div', 'bia-dlg hidden'); dlg.setAttribute('role', 'dialog'); dlg.setAttribute('aria-modal', 'true'); dlg.setAttribute('aria-label', t.battle);
+      dlg = el('div', 'bia-dlg hidden'); dlg.id = 'batalla'; dlg.setAttribute('role', 'dialog'); dlg.setAttribute('aria-modal', 'true'); dlg.setAttribute('aria-label', t.battle);
       const card = el('div', 'bia-card');
       const head = el('div', 'bia-head'); head.append(el('strong', null, t.battle));
-      const x = el('button', 'btn btn-ghost btn-small', '✕'); x.type = 'button'; x.setAttribute('aria-label', t.close); x.addEventListener('click', cerrarBatalla);
+      const x = boton('btn-ghost btn-small bia-x', '✕', cerrarBatalla); x.setAttribute('aria-label', t.close);
       head.append(x); card.append(head, el('p', 'bia-intro', t.intro), el('div', 'bia-body')); dlg.append(card);
       dlg.addEventListener('click', e => { if (e.target === dlg) cerrarBatalla(); });
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && !dlg.classList.contains('hidden')) cerrarBatalla(); });
       document.body.append(dlg);
     } else {
-      dlg.querySelector('.bia-head strong').textContent = t.battle; dlg.querySelector('.bia-intro').textContent = t.intro;
+      dlg.setAttribute('aria-label', t.battle); dlg.querySelector('.bia-head strong').textContent = t.battle; dlg.querySelector('.bia-intro').textContent = t.intro;
+      dlg.querySelector('.bia-x').setAttribute('aria-label', t.close);
     }
     lastFocus = document.activeElement; ronda = 1; cur = null;
     dlg.classList.remove('hidden'); document.body.classList.add('glos-abierto'); pintarRonda();
-    const f = dlg.querySelector('.bia-actions .btn-neon'); if (f) f.focus();
+    const i = dlg.querySelector('.bia-input'); if (i) i.focus();
   }
 
-  function cerrarMenu() { if (menu) { menu.classList.add('hidden'); bubble.setAttribute('aria-expanded', 'false'); } }
-  function textos() {
-    const t = L(); bubble.setAttribute('aria-label', t.bubble); bubble.title = t.bubble;
-    menu.querySelector('.bia-menu-title').textContent = t.menuTitle;
-    menu.querySelector('[data-a=coach]').textContent = t.coach; menu.querySelector('[data-a=battle]').textContent = t.battle;
-  }
-  function init() {
-    bubble = el('button', 'bia-bubble', '🤖'); bubble.type = 'button'; bubble.id = 'biaBubble';
-    bubble.setAttribute('aria-haspopup', 'true'); bubble.setAttribute('aria-expanded', 'false');
-    menu = el('div', 'bia-menu hidden'); menu.append(el('div', 'bia-menu-title'));
-    const b1 = el('button', 'btn btn-ghost'); b1.type = 'button'; b1.dataset.a = 'coach';
-    const b2 = el('button', 'btn btn-ghost'); b2.type = 'button'; b2.dataset.a = 'battle';
-    menu.append(b1, b2); document.body.append(menu, bubble); textos();
-    bubble.addEventListener('click', () => { const ab = menu.classList.toggle('hidden'); bubble.setAttribute('aria-expanded', String(!ab)); });
-    b1.addEventListener('click', () => { cerrarMenu(); if (window.Coach) window.Coach.abrir('letra'); });
-    b2.addEventListener('click', () => { cerrarMenu(); abrirBatalla(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarMenu(); });
-    window.addEventListener('flowlab:lang', () => { textos(); if (dlg && !dlg.classList.contains('hidden')) { cur = null; abrirBatalla(); } });
-  }
+  window.addEventListener('flowlab:lang', () => { if (dlg && !dlg.classList.contains('hidden')) abrirBatalla(); });
   window.BatallaIA = { abrir: abrirBatalla, _FRASES: FRASES, _PALABRAS: PALABRAS };
-  // La burbuja flotante se retiró (Jesús prefiere la IA dentro de cada juego): ver escuela-ia.js. Aquí queda solo la Batalla.
 })();

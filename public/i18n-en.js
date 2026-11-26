@@ -226,7 +226,7 @@
     '🎤 Di tus rimas en voz alta (o escríbelas + Enter)…': '🎤 Say your rhymes out loud (or type them + Enter)…',
     'Récord de rondas verificadas': 'Best verified rounds', 'Récord de rondas de autoevaluación (sin verificar)': 'Best self-scored rounds (unverified)',
     'Elegir una base de FlowLab para el juego': 'Pick a FlowLab track for the game', 'Volumen del beat del juego': 'Game beat volume',
-    'Pista de IA para este reto': 'AI hint for this challenge', 'Barras del 4x4': '4x4 bars', 'Enlaces del pie': 'Footer links',
+    'Pista para este reto': 'Hint for this challenge', 'Barras del 4x4': '4x4 bars', 'Enlaces del pie': 'Footer links',
     'Bloc de notas y modo entrenamiento': 'Notepad and training mode', 'Base: el beat de fondo': 'Base: the backing beat',
     // Segunda pasada
     'Saltar al contenido': 'Skip to content', 'Privacidad': 'Privacy',

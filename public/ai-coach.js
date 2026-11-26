@@ -31,7 +31,7 @@ const RECAPTCHA_KEY = '6LeggSkuAAAAAKNgQCIpjtK8YrcxNaTiqTly0eF3';
 // Modelo de la nube (el que la documentación de Firebase da por defecto desde el SDK 13). Hay que indicarlo porque al pasar inCloudParams se pierde el valor por defecto.
 const CLOUD_MODEL = 'gemini-3.5-flash-lite';
 
-const LIM = { entrada: 1200, lineaMax: 120, lineasMin: 4, lineasMax: 16, salida: 800, pausaMs: 5000, esperaMs: 60000 };
+const LIM = { entrada: 1200, lineaMax: 120, lineasMin: 4, lineasMax: 16, salida: 800, pausaMs: 5000, esperaMs: 60000, barra: 200 };
 const K_OK = 'flowlab_coach_ok';
 
 /* ---------- textos (ES / EN) ---------- */
@@ -117,6 +117,14 @@ function sistema(l) {
     'Keep every answer short. Reply ONLY with JSON that matches the requested schema. Write all the text values in ' + (l === 'en' ? 'English' : 'Spanish') + '.';
 }
 
+// Rival de práctica de la Batalla 1 vs 1: pica el rap de la otra persona, nunca a la persona
+function sistemaBatalla(l) {
+  return 'You are the practice rival in a friendly freestyle rap battle. You may tease only the other person\'s rap skills, in a playful, family-friendly way. ' +
+    'Never mock appearance, identity, origin, family, health or anything personal. No profanity, hate, sexual or violent content, and no real people or brands. ' +
+    'If the bar seems to show a serious personal crisis, drop the battle, answer with warmth and invite the person to talk with someone they trust; never write phone numbers. ' +
+    'Reply ONLY with JSON that matches the requested schema. Write all the text values in ' + (l === 'en' ? 'English' : 'Spanish') + '.';
+}
+
 /* ---------- detección de crisis (se resuelve SIN enviar nada a la IA) ---------- */
 const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 const CRISIS = /suicid|quitarme la vida|quiero morir|quiero morirme|matarme|acabar con mi vida|terminar con mi vida|no quiero vivir|hacerme dano|cortarme las venas|kill myself|end my life|want to die|self[- ]?harm|hurt myself/;
@@ -142,9 +150,19 @@ const S_DESA = {
   },
   required: ['palabras', 'imagenes', 'arranque']
 };
+const S_BATALLA = {
+  type: 'object',
+  properties: {
+    barras: { type: 'array', items: { type: 'string' } },
+    consejo: { type: 'string' }
+  },
+  required: ['barras', 'consejo']
+};
+const ESQUEMAS = { letra: S_LETRA, desa: S_DESA, batalla: S_BATALLA };
 // El mismo esquema para la nube, con los ayudantes de Firebase
 function esquemaNube(Schema, cual) {
   const str = () => Schema.string(), arr = it => Schema.array({ items: it });
+  if (cual === 'batalla') return Schema.object({ properties: { barras: arr(str()), consejo: str() } });
   if (cual === 'letra') {
     return Schema.object({
       properties: {
@@ -195,8 +213,8 @@ function conTiempo(p, ms) {
 async function pedirIA(cual, prompt, onEstado) {
   const l = lang();
   const { ai, servicio } = await cargarSDK();
-  const jsonSchema = cual === 'letra' ? S_LETRA : S_DESA;
-  const sys = sistema(l);
+  const jsonSchema = ESQUEMAS[cual];
+  const sys = cual === 'batalla' ? sistemaBatalla(l) : sistema(l);
   const modelo = ai.getGenerativeModel(servicio, {
     mode: ai.InferenceMode.PREFER_ON_DEVICE,
     onDeviceParams: {
@@ -251,6 +269,11 @@ function limpiaLetra(o) {
 }
 function limpiaDesa(o) {
   return { palabras: lista(o.palabras, 5, 40), imagenes: lista(o.imagenes, 3, 140), arranque: String(o.arranque || '').replace(/\s+/g, ' ').trim().slice(0, 240) };
+}
+function limpiaBatalla(o) {
+  const d = { barras: lista(o.barras, 2, 160), consejo: String(o.consejo || '').replace(/\s+/g, ' ').trim().slice(0, 200) };
+  if (!d.barras.length) { const e = new Error('FORMATO'); e.codigoCoach = 'formato'; throw e; }
+  return d;
 }
 function mensajeError(e) {
   const c = e && e.codigoCoach, m = String((e && (e.message || e.code)) || '') + ' ' + String((e && e.code) || '');
@@ -416,6 +439,35 @@ async function correr(cual) {
   }
 }
 
+/* ---------- Batalla 1 vs 1 (la usa burbuja-ia.js) ----------
+   Mismas reglas que el Coach: aviso previo, crisis sin enviar, una petición a la vez y pausa entre peticiones.
+   Devuelve { barras, consejo, fuente, donde } o { aviso } · { crisis } · { error }. */
+async function rival(datos) {
+  const limpio = s => String(s || '').replace(/\s+/g, ' ').trim();
+  const barra = limpio(datos && datos.barra).slice(0, LIM.barra);
+  if (!barra) return { error: t('sinIA') };
+  if (esCrisis(barra)) return { crisis: t('crisis') };                 // nada sale del dispositivo
+  if (!aceptado()) return { aviso: t('aviso'), boton: t('avisoBtn') };
+  if (ocupado) return { error: t('ocupado') };
+  const falta = Math.ceil((LIM.pausaMs - (Date.now() - ultimoFin)) / 1000);
+  if (ultimoFin && falta > 0) return { error: t('espera')(falta), espera: true };
+  const idioma = lang() === 'en' ? 'English' : 'Spanish';
+  const prompt = 'Your last line in the battle was: "' + limpio(datos.anterior).slice(0, 320) + '"\nThe other person answered with this bar: "' + barra + '"\n' +
+    'Answer with exactly 2 short bars (14 words max each) that rhyme with each other and pick up an idea or a sound from their bar. ' +
+    'Then give one short, kind coaching tip about their bar (rhyme, rhythm or syllables). Reply in ' + idioma + '.';
+  ocupado = true;
+  try {
+    const { texto, fuente } = await pedirIA('batalla', prompt, null);
+    const d = limpiaBatalla(leerJSON(texto));
+    return { barras: d.barras, consejo: d.consejo, fuente, donde: T[lang()]['donde_' + fuente] || t('donde_X') };
+  } catch (e) {
+    try { console.warn('[Batalla]', e && (e.codigoCoach || e.code), e && e.message); } catch (x) { }
+    return { error: mensajeError(e) };
+  } finally {
+    ocupado = false; ultimoFin = Date.now();
+  }
+}
+
 function abrir(cual, opciones) {
   const o = opciones || {};
   if (o.emocion) emocion = o.emocion;
@@ -445,4 +497,4 @@ function enganchar() {
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', enganchar); else enganchar();
 
-window.Coach = { abrir, cerrar, version: SDK_VERSION, esCrisis, _limites: LIM };
+window.Coach = { abrir, cerrar, version: SDK_VERSION, esCrisis, rival, aceptar, _limites: LIM };
