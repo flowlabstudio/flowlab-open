@@ -2,14 +2,14 @@
 
 **A freestyle-rap studio that runs entirely in the browser, with an AI Coach that thinks on your device first and falls back to the cloud.**
 
-FlowLab is plain HTML/CSS/JS (no framework, no bundler, no build step). It lets you write lyrics, record your voice over a beat with real-time effects, build your own beats, and train freestyle with 18 short games. The **AI Coach** is built with **Firebase AI Logic (Hybrid Inference)**: it prefers **Gemini Nano on-device in desktop Chrome** and falls back to a **Gemini model in the cloud** when no local model is available.
+FlowLab is plain HTML/CSS/JS (no framework, no bundler, no build step). It lets you write lyrics, record your voice over a beat with real-time effects, rap over full backing tracks or build your own beats, and train freestyle with 18 short games. The **AI Coach** is built with **Firebase AI Logic (Hybrid Inference)**: it prefers **Gemini Nano on-device in desktop Chrome** and falls back to a **Gemini model in the cloud** when no local model is available.
 
 > Built for the **#BuildHybridAI** challenge (Google · Firebase · Devpost).
 > Live demo (hosted): https://flowlab-open.pages.dev
 
 ## Why it matters
 
-- **Privacy first.** Lyrics can be personal. When Chrome has Gemini Nano, the text never leaves the device. When it does not, the app says so ("☁️ Answered in the cloud") and shows a notice before the first use. Audio is **never** sent anywhere.
+- **Privacy first.** Lyrics can be personal. When Chrome has Gemini Nano, the text never leaves the device. When it does not, the app says so ("☁️ Answered in the cloud") and shows a notice before the first use. The Coach **never** receives audio. (Optional dictation and voice check use the browser's speech recognition, which in Chrome may process audio on the browser vendor's servers.)
 - **Free and low-friction.** No accounts, no API keys for users. The cloud fallback uses the Gemini Developer API on the free Spark plan, protected by App Check and strict input/output limits.
 - **Made for people who learn by doing.** Many young rappers in Latin America write on a phone with no budget for tools. The coach explains in plain words, in **Spanish or English**.
 - **Safe by design.** The coach only gives structure, words and ideas (rhymes, uneven lines, ideas, an optional improved version). If a text looks like a personal crisis, it is **not sent to any AI**; the user gets a warm fixed message instead.
@@ -50,10 +50,11 @@ All the code is in [`public/ai-coach.js`](public/ai-coach.js) (an ES module).
 
 ## What else is in the app
 
-- **Booth** – write lyrics (rhyme finder, syllable counter), record over a YouTube link, an MP3/WAV or a built-in beat, with Auto-Tune (AudioWorklet, PSOLA), effects, mixing and WAV export.
-- **Beats** – a synth/sequencer made only with Web Audio (no samples): pads, 6 kits, 25 genre rhythms, WAV export.
-- **School** – 18 freestyle games (Univocal, Relámpago, Cadena 4x4, Minuto libre…), BPM/TAP, voice verification (beta), XP and ranks.
-- **PWA**, works offline, Spanish/English interface, built-in glossary and "?" help everywhere.
+- **Booth** – write lyrics (rhyme finder, syllable counter), record over a YouTube link, an MP3/WAV or a FlowLab track, with Auto-Tune (AudioWorklet, PSOLA), effects, a voice-take editor (zoom, trim, cut, fades, normalize), mixing and WAV export.
+- **Beats** – 10 full backing tracks in 5 genres to rap over, plus a Web Audio pad grid and step sequencer (6 kits, WAV export).
+- **School** – 18 freestyle games (Univocal, Relámpago, Cadena 4x4, Minuto libre…), BPM/TAP, voice verification (beta), XP and ranks, a 1 vs 1 practice battle (built-in phrase bank), image prompts to rap over and instant offline hints.
+- **Graffiti** mode to draw over the studio and save it.
+- **PWA** with offline support (full tracks need a connection to load), Spanish/English interface, glossary and "?" help in both languages. The freestyle word banks and rhyme engine are in Spanish.
 
 ## What was built during the challenge
 
@@ -61,9 +62,16 @@ The app existed before as a private project. During the contest period we added:
 
 - the **AI Coach** with Firebase AI Logic hybrid inference (on-device first, cloud fallback) and App Check;
 - the two Coach features above, with schema-constrained JSON output and content/safety rules (including the crisis path that never calls the AI);
-- an **ES / EN interface** (`public/i18n.js`) with browser-language suggestion;
+- an **ES / EN interface** (`public/i18n.js`, `i18n-en.js`, `i18n-ayudas.js`) with browser-language suggestion;
+- full backing tracks, the practice battle, image prompts, offline hints, the voice-take editor and graffiti mode;
 - a tightened **CSP** and an updated **privacy page** that explains exactly what leaves the device and when;
 - this open-source edition (commercial plans, analytics and personal data removed).
+
+## Pre-existing work, tools and media
+
+- **Pre-existing:** the recording studio, lyrics workspace, pad sequencer and freestyle school existed as a private project before the contest.
+- **Tools:** developed with AI coding assistants (Claude Code).
+- **Media:** the backing tracks in `public/assets/bases/` were generated with Google Flow Music and the images in `public/assets/img/` with Google Flow. See [NOTICE](NOTICE).
 
 ## Run it
 
@@ -99,10 +107,9 @@ The smoke test replaces the Firebase SDK with a fake module (no network, no keys
 - Firebase AI Monitoring shows no data for on-device requests (documented SDK behavior).
 - App Check on a real site needs a reCAPTCHA Enterprise key (not included).
 - Voice verification uses the browser's SpeechRecognition (beta; audio handling depends on the browser vendor).
-- Only the lyrics-coach and the venting helper use AI; the freestyle games themselves are rule-based.
+- Only the lyrics coach and the venting helper call a generative model. The freestyle games, the practice battle and the school hints are rule-based and work without it.
 
 ## License
 
-[Apache License 2.0](LICENSE). See [NOTICE](NOTICE) for third-party components.
+Source code: [Apache License 2.0](LICENSE). See [NOTICE](NOTICE) for third-party components and for the AI-generated media files.
 
-<!-- final build 2026-11-25 -->
