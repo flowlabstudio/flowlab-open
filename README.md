@@ -26,7 +26,7 @@ Open it with the **🤖 AI Coach** button (also **Improve with AI** under the ly
 
 ### How Firebase AI Logic hybrid is used
 
-All the code is in [`public/ai-coach.js`](public/ai-coach.js) (an ES module). The battle screen ([`public/burbuja-ia.js`](public/burbuja-ia.js)) calls the same hybrid function through `window.Coach.rival()`.
+All the code is in [`public/js/ai-coach.js`](public/js/ai-coach.js) (an ES module). The battle screen ([`public/burbuja-ia.js`](public/burbuja-ia.js)) calls the same hybrid function through `window.Coach.rival()`.
 
 1. **Lazy loading.** The Firebase SDK (v13.4.0, hybrid needs ≥ 12.5.0) is imported with `import()` from `https://www.gstatic.com/firebasejs/13.4.0/…` only when the user presses *Generate* inside the Coach. The page works exactly the same if it is never opened, or if the SDK cannot be loaded (offline).
 2. **Hybrid model.**
@@ -52,7 +52,7 @@ All the code is in [`public/ai-coach.js`](public/ai-coach.js) (an ES module). Th
 ## What else is in the app
 
 - **Booth** – write lyrics (rhyme finder, syllable counter), record over a YouTube link, an MP3/WAV or a FlowLab track, with Auto-Tune (AudioWorklet, PSOLA), effects, a voice-take editor (zoom, trim, cut, fades, normalize), mixing and WAV export.
-- **Beats** – 10 full backing tracks in 5 genres to rap over, plus a Web Audio pad grid and step sequencer (6 kits, WAV export).
+- **Beats** – 10 full backing tracks in 5 genres to rap over, plus a Web Audio pad grid and step sequencer (20 instruments, 68 selectable audio samples and 6 kits). Each row can choose its own sample; vinyl, filter, saturation and short reverb are user-adjustable. “Sorpréndeme” creates a varied 2:30 arrangement with multiple melodic layers, percussion, samples and changing effects; vinyl is off by default. WAV export, one-pass playback and timed editing remain available.
 - **School** – 18 freestyle games (Univocal, Relámpago, Cadena 4x4, Minuto libre…), BPM/TAP, voice verification (beta), XP and ranks, a 1 vs 1 battle against the AI, image prompts to rap over and instant offline hints.
 - **Graffiti** mode to draw over the studio and save it.
 - **PWA** with offline support (full tracks need a connection to load), Spanish/English interface, glossary and "?" help in both languages. The freestyle word banks and rhyme engine are in Spanish.
@@ -63,7 +63,7 @@ The app existed before as a private project. During the contest period we added:
 
 - the **AI Coach** with Firebase AI Logic hybrid inference (on-device first, cloud fallback) and App Check;
 - the two Coach features above, with schema-constrained JSON output and content/safety rules (including the crisis path that never calls the AI);
-- an **ES / EN interface** (`public/i18n.js`, `i18n-en.js`, `i18n-ayudas.js`) with browser-language suggestion;
+- an **ES / EN interface** (`public/js/i18n.js`, `public/i18n-en.js`, `public/i18n-ayudas.js`) with browser-language suggestion;
 - full backing tracks, the AI battle, image prompts, offline hints, the voice-take editor and graffiti mode;
 - a tightened **CSP** and an updated **privacy page** that explains exactly what leaves the device and when;
 - this open-source edition (commercial plans, analytics and personal data removed).
@@ -87,9 +87,9 @@ Open http://localhost:5500.
 ### Make the Coach work with your own Firebase project
 
 1. Create a Firebase project (Spark plan) and enable **Firebase AI Logic** with the **Gemini Developer API**.
-2. Register a web app and paste its config into `FIREBASE_CONFIG` in `public/ai-coach.js` (the web config is public by design; **App Check is what protects the project**).
+2. Register a web app and paste its config into `FIREBASE_CONFIG` in `public/js/ai-coach.js` (the web config is public by design; **App Check is what protects the project**).
 3. **Local testing:** open the app on `localhost`, press *Generate* once, and copy the line `Firebase App Check debug token: …` from the browser console. Register it in *Firebase console → App Check → Apps → ⋮ → Manage debug tokens*. (You can pin it with `localStorage.setItem('flowlab_appcheck_debug', '<token>')` — never commit it.)
-4. **Production:** create a reCAPTCHA Enterprise **score-based web** key (no checkbox), register it as the App Check provider, and set `RECAPTCHA_KEY` in `public/ai-coach.js`.
+4. **Production:** create a reCAPTCHA Enterprise **score-based web** key (no checkbox), register it as the App Check provider, and set `RECAPTCHA_KEY` in `public/js/ai-coach.js`.
 5. Optional, for the on-device path: desktop **Chrome 139+**, enable `chrome://flags/#prompt-api-for-gemini-nano-multimodal-input`, restart, and check `await LanguageModel.availability()` in DevTools. Without it the Coach simply uses the cloud.
 
 ### Tests
@@ -113,4 +113,3 @@ The smoke test replaces the Firebase SDK with a fake module (no network, no keys
 ## License
 
 Source code: [Apache License 2.0](LICENSE). See [NOTICE](NOTICE) for third-party components and for the AI-generated media files.
-

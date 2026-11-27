@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://www.gstatic.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; frame-src https://www.youtube.com https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/; connect-src 'self' https://api.datamuse.com https://content-firebaseappcheck.googleapis.com https://firebasevertexai.googleapis.com https://www.google.com/recaptcha/; img-src 'self'; style-src 'self' 'unsafe-inline'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://www.gstatic.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; frame-src https://www.youtube.com https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/; connect-src 'self' https://api.datamuse.com https://content-firebaseappcheck.googleapis.com https://firebasevertexai.googleapis.com https://www.google.com/recaptcha/; img-src 'self' data:; style-src 'self' 'unsafe-inline'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>FlowLab Studio · Estudio Lírico y Vocal Urbano</title>
 <link rel="icon" href="favicon.ico" sizes="48x48">
@@ -11,6 +11,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <link rel="preload" href="assets/fonts/inter-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/barlow-condensed-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/barlow-condensed-800-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/barlow-condensed-900-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/permanent-marker-latin.woff2" as="font" type="font/woff2" crossorigin>
 <meta name="theme-color" content="#DEFC07">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -45,10 +49,37 @@
   "image": "https://flowlab-studio.pages.dev/assets/og-image.png"
 }
 </script>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="css/styles.css">
 <link rel="stylesheet" href="tema-elite.css">
+<style>
+.app-loader{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#070707;overflow:hidden;transition:opacity .7s ease,visibility .7s}
+.app-loader.is-done{opacity:0;visibility:hidden}
+.app-loader::before{content:"";position:absolute;inset:-20%;background:radial-gradient(circle at 50% 45%,rgba(222,252,7,.18),transparent 55%);animation:ld-glow 3s ease-in-out infinite}
+.ld-img{position:relative;width:min(78vw,520px);height:auto;border-radius:14px;box-shadow:0 0 40px rgba(222,252,7,.25);animation:ld-pulse 2.4s ease-in-out infinite}
+.ld-bars{position:relative;display:flex;align-items:flex-end;gap:5px;height:34px}
+.ld-bars i{width:5px;height:8px;background:#DEFC07;border-radius:3px;animation:ld-bar 1s ease-in-out infinite}
+.ld-bars i:nth-child(3n+2){background:#00e5ff}
+.ld-bars i:nth-child(3n){background:#ff2bd6}
+.ld-bars i:nth-child(odd){animation-delay:.15s}
+.ld-track{position:relative;width:min(60vw,320px);height:3px;background:#1d1d1d;border-radius:3px;overflow:hidden}
+.ld-track b{display:block;height:100%;width:0;background:linear-gradient(90deg,#DEFC07,#00e5ff,#ff2bd6);animation:ld-fill 2.6s ease forwards}
+.ld-msg{position:relative;margin:0;font:600 13px/1 Inter,system-ui,sans-serif;letter-spacing:.14em;color:#DEFC07;text-transform:uppercase}
+.ld-sub{position:relative;margin:0;font:400 12px/1.4 Inter,system-ui,sans-serif;color:#9a9a9a}
+@keyframes ld-pulse{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.03);filter:brightness(1.15)}}
+@keyframes ld-glow{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes ld-bar{0%,100%{height:8px}50%{height:34px}}
+@keyframes ld-fill{to{width:100%}}
+@media (prefers-reduced-motion:reduce){.app-loader *,.app-loader::before{animation:none!important}}
+</style>
 </head>
 <body>
+<div id="appLoader" class="app-loader" role="status" aria-live="polite" aria-label="Cargando FlowLab Studio" aria-hidden="false">
+  <img class="ld-img" src="assets/loader-flowlab.png" alt="FlowLab Studio" width="520">
+  <div class="ld-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="ld-track"><b></b></div>
+  <p class="ld-msg" id="loaderMsg">Cargando motor de audio…</p>
+  <p class="ld-sub">Usa audífonos para evitar eco en tu grabación</p>
+</div>
 <a class="skip-link" href="#app">Saltar al contenido</a>
 
 <header class="topbar">
@@ -66,9 +97,18 @@
   </div>
 
   <nav class="modes" role="tablist" aria-label="Modos de FlowLab">
-    <button type="button" role="tab" id="tab-cabina" class="mode-tab on" data-mode-tab="cabina" aria-selected="true" aria-controls="mode-cabina"><i>01</i>Cabina</button>
-    <button type="button" role="tab" id="tab-beats" class="mode-tab" data-mode-tab="beats" aria-selected="false" aria-controls="mode-beats" tabindex="-1"><i>02</i>Beats</button>
-    <button type="button" role="tab" id="tab-escuela" class="mode-tab" data-mode-tab="escuela" aria-selected="false" aria-controls="mode-escuela" tabindex="-1"><i>03</i>Escuela</button>
+    <button type="button" role="tab" id="tab-cabina" class="mode-tab on" data-mode-tab="cabina" aria-selected="true" aria-controls="mode-cabina" tabindex="0">
+      <svg class="mode-tab-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="13" rx="4"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v4m-4 0h8"></path></svg>
+      <span class="mode-tab-copy"><span class="mode-tab-heading"><i>01</i><b>Cabina</b></span><small>Escribe, graba y mezcla</small></span>
+    </button>
+    <button type="button" role="tab" id="tab-beats" class="mode-tab" data-mode-tab="beats" aria-selected="false" aria-controls="mode-beats" tabindex="-1">
+      <svg class="mode-tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4m4-8v12m4-15v18m4-13v8m4-11v14m4-10v6"></path></svg>
+      <span class="mode-tab-copy"><span class="mode-tab-heading"><i>02</i><b>Beats</b></span><small>Arma tu ritmo</small></span>
+    </button>
+    <button type="button" role="tab" id="tab-escuela" class="mode-tab" data-mode-tab="escuela" aria-selected="false" aria-controls="mode-escuela" tabindex="-1">
+      <svg class="mode-tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"></path><path d="m19 14 .9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9L19 14Z"></path></svg>
+      <span class="mode-tab-copy"><span class="mode-tab-heading"><i>03</i><b>Escuela</b></span><small>Entrena tu freestyle</small></span>
+    </button>
   </nav>
     <button type="button" id="modeInfo" class="mode-info" aria-label="Ver cómo funciona este modo" title="¿Cómo funciona este modo?" aria-expanded="false">ℹ️</button>
 
@@ -147,7 +187,7 @@
   </section>
 
   <!-- ============ MODO CABINA ============ -->
-  <div class="mode-pane" id="mode-cabina" data-mode="cabina" role="tabpanel" aria-labelledby="tab-cabina">
+  <div class="mode-pane" id="mode-cabina" data-mode="cabina" role="tabpanel" aria-labelledby="tab-cabina" aria-hidden="false">
     <div class="audio-banner" data-audio-banner role="status" aria-live="polite">
       <span>🔊 <b>Toca para activar el sonido.</b> Si no oyes nada: quita el <b>modo silencio</b> del celular (interruptor al costado) y sube el volumen.</span>
     </div>
@@ -478,7 +518,7 @@
   </div>
 
   <!-- ============ MODO BEATS · Creador de beats (Mejoras 3 · Parte 2) ============ -->
-  <div class="mode-pane hidden" id="mode-beats" data-mode="beats" role="tabpanel" aria-labelledby="tab-beats">
+  <div class="mode-pane hidden" id="mode-beats" data-mode="beats" role="tabpanel" aria-labelledby="tab-beats" aria-hidden="true">
     <div class="audio-banner" data-audio-banner role="status" aria-live="polite">
       <span>🔊 <b>Toca para activar el sonido.</b> Si no oyes nada: quita el <b>modo silencio</b> del celular (interruptor al costado) y sube el volumen.</span>
     </div>
@@ -532,7 +572,7 @@
       </div>
       <div class="bt-actions">
         <button type="button" class="btn btn-ghost" id="btClear">🧹 Limpiar</button>
-        <button type="button" class="btn btn-ghost" id="btRandom">🎲 Sorpréndeme</button>
+        <button type="button" class="btn btn-ghost" id="btRandom" title="Genera una composición distinta con instrumentos, samples y efectos">🎲 Sorpréndeme · 2:30</button>
         <button type="button" class="btn btn-neon" id="btSave">💾 Guardar</button>
         <button type="button" class="btn btn-ghost" data-mode-go="cabina">← Volver a la Cabina</button>
         <span class="bt-status" id="btStatus" role="status" aria-live="polite"></span>
@@ -562,7 +602,7 @@
           <div class="bt-pads" id="btPads" role="group" aria-labelledby="btPadsTitle"></div>
         </div>
         <details class="bt-fx more" id="moreFxBeats">
-          <summary id="btFxTitle">Más opciones · Dale sabor (vinilo, filtro, saturación)</summary>
+          <summary id="btFxTitle">Efectos · vinilo, filtro, saturación y reverb</summary>
           <p class="hint">Mueve los deslizadores y escucha cómo cambia.</p>
           <label class="lbl" for="btFxVinyl">Vinilo <span class="val" id="btFxVinylVal">0%</span></label>
           <input type="range" id="btFxVinyl" min="0" max="100" step="1" value="0">
@@ -570,8 +610,26 @@
           <input type="range" id="btFxFilter" min="0" max="100" step="1" value="0">
           <label class="lbl" for="btFxSat">Saturación <span class="val" id="btFxSatVal">0%</span></label>
           <input type="range" id="btFxSat" min="0" max="100" step="1" value="0">
+          <label class="lbl" for="btFxReverb">Reverb <span class="val" id="btFxReverbVal">0%</span></label>
+          <input type="range" id="btFxReverb" min="0" max="100" step="1" value="0">
         </details>
       </div>
+
+      <section class="bt-arrangement hidden" id="btArrangement" aria-labelledby="btArrangementTitle">
+        <div class="bt-arr-head">
+          <div>
+            <h3 id="btArrangementTitle">Composición · 2:30</h3>
+            <p class="hint" id="btArrangementMeta">Una pieza completa, organizada por tiempo y secciones.</p>
+          </div>
+          <button type="button" class="btn btn-ghost btn-small" id="btAddSection">＋ Añadir 10 s</button>
+        </div>
+        <div class="bt-arr-track" id="btArrangementSections" role="group" aria-label="Secciones de la composición"></div>
+        <label class="bt-arr-seek">
+          <span class="lbl">Fragmento para editar <output id="btArrangementPosition">0:00</output></span>
+          <input type="range" id="btArrangementSeek" min="0" max="0" step="1" value="0" aria-label="Seleccionar fragmento de la composición">
+        </label>
+        <p class="hint bt-arr-editing" id="btArrangementEditing" aria-live="polite"></p>
+      </section>
 
       <div class="bt-seq-block">
         <div class="bt-seq-head">
@@ -581,7 +639,7 @@
             <div class="bt-add-menu hidden" id="btAddMenu" role="menu" aria-label="Instrumentos que puedes añadir"></div>
           </div>
         </div>
-        <p class="hint">Toca un paso para encenderlo o apagarlo. Mantén pulsado (o clic derecho) para cambiar la fuerza del golpe. En bajo y sample, <b>♪</b> te deja elegir la nota de cada paso.</p>
+        <p class="hint">Toca un paso para encenderlo o apagarlo. Mantén pulsado (o clic derecho) para cambiar la fuerza del golpe. En bajo y sample, <b>♪</b> te deja elegir la nota de cada paso. En cada pista puedes escoger cualquiera de los 68 samples o usar el sonido automático del kit.</p>
         <p class="bt-scroll-hint" aria-hidden="true">↔ Desliza el patrón para ver todos los pasos</p>
         <div class="bt-seq-scroll" id="btSeqScroll"><div class="bt-seq" id="btSeq" role="group" aria-labelledby="btSeqTitle"></div></div>
       </div>
@@ -623,7 +681,7 @@
   </div>
 
   <!-- ============ MODO ESCUELA ============ -->
-  <div class="mode-pane hidden" id="mode-escuela" data-mode="escuela" role="tabpanel" aria-labelledby="tab-escuela">
+  <div class="mode-pane hidden" id="mode-escuela" data-mode="escuela" role="tabpanel" aria-labelledby="tab-escuela" aria-hidden="true">
     <section class="panel panel-school">
       <div class="block school" id="school">
         <div class="school-head">
@@ -806,16 +864,17 @@
   <nav aria-label="Enlaces del pie"><a href="privacidad.html">Privacidad</a></nav>
 </footer>
 
-<script src="freestyle-data.js"></script>
-<script src="i18n.js"></script>
-<script src="app.js"></script>
-<script src="freestyle-school.js"></script>
-<script src="cabina.js"></script>
-<script src="beats.js"></script>
+<script src="js/loader.js"></script>
+<script src="js/freestyle-data.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+<script src="js/freestyle-school.js"></script>
+<script src="js/cabina.js"></script>
+<script src="js/beats.js"></script>
 <div id="updateBar" class="update-bar hidden" role="status" aria-live="polite"><span class="ub-msg">Hay una versión nueva de FlowLab.</span> <button type="button" class="btn btn-neon btn-small" data-update-go>Actualizar</button> <button type="button" class="btn btn-ghost btn-small" data-update-later aria-label="Ahora no">Después</button></div>
-<script src="help.js"></script>
-<script src="glosario.js"></script>
-<script type="module" src="ai-coach.js"></script>
+<script src="js/help.js"></script>
+<script src="js/glosario.js"></script>
+<script type="module" src="js/ai-coach.js"></script>
 <script src="burbuja-ia.js" defer></script>
 <script src="graffiti.js" defer></script>
 <script src="feedback.js" defer></script>
@@ -825,6 +884,6 @@
 <script src="rapear-imagenes.js" defer></script>
 <script src="i18n-en.js" defer></script>
 <script src="i18n-ayudas.js" defer></script>
-<script src="pwa.js"></script>
+<script src="js/pwa.js"></script>
 </body>
 </html>
