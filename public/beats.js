@@ -579,7 +579,11 @@
     const propios = st.rows.map(row => row.sample).filter(Boolean), cargados = sampleBuffers.get(e.c);
     const faltan = Object.values((KITS[st.kit] || KITS.dusty).samples).concat(propios).some(file => !(cargados && cargados.has(file)));
     if (!faltan) arranca();
-    else { say('Cargando sonidos…'); Promise.race([loadSamples(e.c, st.kit, propios), new Promise(r => setTimeout(r, 4000))]).then(arranca, arranca); }
+    else {
+      const previo = statusEl.textContent; say('Cargando sonidos…');
+      const listo = () => { if (turno === playTurn) { if (previo) say(previo); else statusEl.textContent = ''; } arranca(); };   // vuelve el mensaje anterior
+      Promise.race([loadSamples(e.c, st.kit, propios), new Promise(r => setTimeout(r, 4000))]).then(listo, listo);
+    }
     ui.play();
   }
   function stop() {
