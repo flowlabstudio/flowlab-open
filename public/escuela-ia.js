@@ -1,6 +1,6 @@
 /* FlowLab · IA dentro de la Escuela.
-   1) Insignia "IA" en la esquina de la pantalla de juego (también en pantalla completa): da una pista
-      al momento y SIN internet (rimas del motor de rimas + consejo del reto). "Más ideas con IA" abre el Coach.
+   1) Botón "Pista" en la esquina de la pantalla de juego (también en pantalla completa): da una ayuda
+      al momento y SIN internet (rimas del motor de rimas + consejo del reto, sin IA). "Más ideas con IA" abre el Coach.
    2) Botón "Batalla 1 vs 1 con la IA" en la Escuela (usa burbuja-ia.js). */
 (function () {
   'use strict';
@@ -53,7 +53,7 @@
     const game = ($('#stageGame') || {}).textContent || '', main = ($('#gymMain') || {}).textContent || '';
     if (!panel) { panel = document.createElement('div'); panel.className = 'eia-panel'; panel.setAttribute('role', 'status'); stage.append(panel); }
     panel.textContent = '';
-    const h = document.createElement('b'); h.textContent = 'IA · ' + (EN() ? 'hint' : 'pista'); panel.append(h);
+    const h = document.createElement('b'); h.textContent = EN() ? 'Hint' : 'Pista'; panel.append(h);
     const rs = rhymesOf(main);
     if (rs.length) { const r = document.createElement('div'); r.className = 'eia-rhymes'; rs.forEach(x => { const s = document.createElement('span'); s.textContent = x; r.append(s); }); panel.append(r); }
     const p = document.createElement('p'); p.textContent = tipFor(game); panel.append(p);
@@ -65,8 +65,8 @@
   function init() {
     const top = $('#gymStage .stage-top');
     if (top && !$('#btnEscuelaIA')) {
-      btn = document.createElement('button'); btn.type = 'button'; btn.id = 'btnEscuelaIA'; btn.className = 'eia-btn'; btn.textContent = 'IA';
-      btn.setAttribute('aria-label', EN() ? 'AI hint for this challenge' : 'Pista de IA para este reto'); btn.addEventListener('click', showHint); top.append(btn);
+      btn = document.createElement('button'); btn.type = 'button'; btn.id = 'btnEscuelaIA'; btn.className = 'eia-btn'; btn.textContent = EN() ? 'Hint' : 'Pista';
+      btn.setAttribute('aria-label', EN() ? 'Hint for this challenge' : 'Pista para este reto'); btn.addEventListener('click', showHint); top.append(btn);
     }
     const mission = $('#school .mission, #school #missionBox') || $('#school .school-body') || $('#school');
     if (mission && !$('#btnBatallaIA')) {
@@ -77,5 +77,11 @@
       (heading && heading.parentNode ? heading.parentNode : mission).insertBefore(b, heading ? heading.nextSibling : mission.firstChild);
     }
   }
+  // Al cambiar de idioma se actualizan los dos botones
+  window.addEventListener('flowlab:lang', () => {
+    const h = $('#btnEscuelaIA'), b = $('#btnBatallaIA');
+    if (h) { h.textContent = EN() ? 'Hint' : 'Pista'; h.setAttribute('aria-label', EN() ? 'Hint for this challenge' : 'Pista para este reto'); }
+    if (b) b.textContent = '⚔️ ' + (EN() ? '1 vs 1 battle with the AI' : 'Batalla 1 vs 1 con la IA');
+  });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

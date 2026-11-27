@@ -528,15 +528,15 @@
           <p class="eyebrow orange">Beat Lab</p>
           <h2 class="beats-title">Arma. Prueba. Refina.</h2>
         </div>
-        <p class="bt-sub">Todo suena desde tu navegador: sin descargas y sin internet.</p>
+        <p class="bt-sub">Bases completas para rapear y ritmos para crear los tuyos.</p>
       </div>
 
-      <!-- Ritmos listos por género (Mejoras 5 · C): presets.js se carga al entrar a este modo -->
+      <!-- Bases completas por género: presets.js se carga al entrar a este modo -->
       <div class="bt-presets" id="btPresets">
-        <h3 id="btGenresTitle">Elige un ritmo y cámbialo a tu gusto</h3>
+        <h3 id="btGenresTitle">Elige tu base</h3>
         <div class="bt-genres" id="btGenres" role="group" aria-labelledby="btGenresTitle"></div>
         <p class="bt-gtag" id="btGenreTag"></p>
-        <div class="bt-cards" id="btCards" aria-live="polite"><p class="hint">Cargando ritmos…</p></div>
+        <div class="bt-pro" id="btPro" aria-live="polite"><p class="hint">Cargando ritmos…</p></div>
       </div>
 
       <!-- Transporte -->
@@ -572,7 +572,7 @@
       </div>
       <div class="bt-actions">
         <button type="button" class="btn btn-ghost" id="btClear">🧹 Limpiar</button>
-        <button type="button" class="btn btn-ghost" id="btRandom">🎲 Sorpréndeme</button>
+        <button type="button" class="btn btn-ghost" id="btRandom" title="Genera una composición distinta con instrumentos, samples y efectos">🎲 Sorpréndeme · 2:30</button>
         <button type="button" class="btn btn-neon" id="btSave">💾 Guardar</button>
         <button type="button" class="btn btn-ghost" data-mode-go="cabina">← Volver a la Cabina</button>
         <span class="bt-status" id="btStatus" role="status" aria-live="polite"></span>
@@ -602,7 +602,7 @@
           <div class="bt-pads" id="btPads" role="group" aria-labelledby="btPadsTitle"></div>
         </div>
         <details class="bt-fx more" id="moreFxBeats">
-          <summary id="btFxTitle">Más opciones · Dale sabor (vinilo, filtro, saturación)</summary>
+          <summary id="btFxTitle">Efectos · vinilo, filtro, saturación y reverb</summary>
           <p class="hint">Mueve los deslizadores y escucha cómo cambia.</p>
           <label class="lbl" for="btFxVinyl">Vinilo <span class="val" id="btFxVinylVal">0%</span></label>
           <input type="range" id="btFxVinyl" min="0" max="100" step="1" value="0">
@@ -610,8 +610,26 @@
           <input type="range" id="btFxFilter" min="0" max="100" step="1" value="0">
           <label class="lbl" for="btFxSat">Saturación <span class="val" id="btFxSatVal">0%</span></label>
           <input type="range" id="btFxSat" min="0" max="100" step="1" value="0">
+          <label class="lbl" for="btFxReverb">Reverb <span class="val" id="btFxReverbVal">0%</span></label>
+          <input type="range" id="btFxReverb" min="0" max="100" step="1" value="0">
         </details>
       </div>
+
+      <section class="bt-arrangement hidden" id="btArrangement" aria-labelledby="btArrangementTitle">
+        <div class="bt-arr-head">
+          <div>
+            <h3 id="btArrangementTitle">Composición · 2:30</h3>
+            <p class="hint" id="btArrangementMeta">Una pieza completa, organizada por tiempo y secciones.</p>
+          </div>
+          <button type="button" class="btn btn-ghost btn-small" id="btAddSection">＋ Añadir 10 s</button>
+        </div>
+        <div class="bt-arr-track" id="btArrangementSections" role="group" aria-label="Secciones de la composición"></div>
+        <label class="bt-arr-seek">
+          <span class="lbl">Fragmento para editar <output id="btArrangementPosition">0:00</output></span>
+          <input type="range" id="btArrangementSeek" min="0" max="0" step="1" value="0" aria-label="Seleccionar fragmento de la composición">
+        </label>
+        <p class="hint bt-arr-editing" id="btArrangementEditing" aria-live="polite"></p>
+      </section>
 
       <div class="bt-seq-block">
         <div class="bt-seq-head">
@@ -621,7 +639,7 @@
             <div class="bt-add-menu hidden" id="btAddMenu" role="menu" aria-label="Instrumentos que puedes añadir"></div>
           </div>
         </div>
-        <p class="hint">Toca un paso para encenderlo o apagarlo. Mantén pulsado (o clic derecho) para cambiar la fuerza del golpe. En bajo y sample, <b>♪</b> te deja elegir la nota de cada paso.</p>
+        <p class="hint">Toca un paso para encenderlo o apagarlo. Mantén pulsado (o clic derecho) para cambiar la fuerza del golpe. En bajo y sample, <b>♪</b> te deja elegir la nota de cada paso. En cada pista puedes escoger cualquiera de los 68 samples o usar el sonido automático del kit.</p>
         <p class="bt-scroll-hint" aria-hidden="true">↔ Desliza el patrón para ver todos los pasos</p>
         <div class="bt-seq-scroll" id="btSeqScroll"><div class="bt-seq" id="btSeq" role="group" aria-labelledby="btSeqTitle"></div></div>
       </div>
@@ -864,6 +882,8 @@
 <script src="escuela-ia.js" defer></script>
 <script src="editor-voz.js" defer></script>
 <script src="rapear-imagenes.js" defer></script>
+<script src="i18n-en.js" defer></script>
+<script src="i18n-ayudas.js" defer></script>
 <script src="js/pwa.js"></script>
 </body>
 </html>

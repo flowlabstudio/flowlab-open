@@ -32,8 +32,8 @@
   let presetsPedidos = false;
   function cargarPresets() {
     if (presetsPedidos || window.BeatPresets) return; presetsPedidos = true;
-    const sc = document.createElement('script'); sc.src = '/js/presets.js';
-    sc.onerror = () => { presetsPedidos = false; const c = $('#btCards'); if (c) c.textContent = 'No se pudieron cargar los ritmos listos (¿sin internet?). Puedes seguir armando tu beat desde cero.'; };
+    const sc = document.createElement('script'); sc.src = 'js/presets.js';
+    sc.onerror = () => { presetsPedidos = false; const c = $('#btPro'); if (c) c.textContent = 'No se pudieron cargar las bases (¿sin internet?). Puedes seguir armando tu beat desde cero.'; };
     document.head.appendChild(sc);
   }
   /* ---- Introducción de cada modo: recuadro corto con 3 pasos, "Entendido" lo oculta y se acuerda; el ℹ️ de la cabecera lo vuelve a mostrar ---- */
@@ -84,6 +84,8 @@
     if (!MODOS[m]) m = 'cabina';
     if (m === modo) return;
     const antes = modo, transition = ++modeTransition;
+    if (antes === 'escuela' && window.School && School.stop) School.stop();
+    if (m === 'beats' && antes && S && S.stopAll) S.stopAll();
     modo = m;
     $$('.mode-pane').forEach(p => {
       p.classList.add('hidden');

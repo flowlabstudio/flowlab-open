@@ -30,6 +30,17 @@ const out = []; const ok = (c, m) => { out.push((c ? '✅ ' : '❌ ') + m); };
   await p.waitForTimeout(350); const n = await p.evaluate(() => globalThis.__calls.length);
   await p.fill('#coachTexto', 'bad day\nI cannot go on\nI want to die\nno one hears'); await p.click('#coachGoLetra'); await p.waitForSelector('.coach-crisis');
   ok(await p.evaluate(() => globalThis.__calls.length) === n, 'a crisis text is NOT sent to the AI');
+  // 1 vs 1 battle: same hybrid call, same guardrails
+  await p.click('#coachCerrar'); await p.waitForTimeout(350);
+  await p.evaluate(() => { globalThis.__mock = { texto: JSON.stringify({ barras: ['first reply line', 'second reply line'], consejo: 'keep breathing' }), src: 'IN_CLOUD' }; window.BatallaIA.abrir(); });
+  const antes = await p.evaluate(() => globalThis.__calls.length);
+  await p.fill('.bia-input', 'bad day, I want to die'); await p.click('.bia-send'); await p.waitForSelector('#batalla .coach-crisis');
+  ok(await p.evaluate(() => globalThis.__calls.length) === antes, 'battle: a crisis bar is NOT sent to the AI');
+  await p.fill('.bia-input', 'my flow is calm and clean'); await p.click('.bia-send'); await p.waitForSelector('.bia-reply');
+  ok(/second reply line/.test(await p.textContent('.bia-reply')), 'battle: the AI answers the bar');
+  ok(/☁/.test(await p.textContent('.bia-badge')), 'battle: the badge says where the answer ran');
+  await p.click('.bia-next'); ok(/first reply line/.test(await p.textContent('#batalla .bia-line')), 'battle: the reply opens the next round');
+  await p.click('.bia-x');
   await p.selectOption('#langSel', 'en'); ok((await p.textContent('#btnCoach')).includes('AI Coach'), 'the interface switches to English');
   ok(errs.length === 0, 'no console errors ' + JSON.stringify(errs));
   console.log(out.join('\n')); await b.close(); srv.close(); process.exit(out.some(x => x.startsWith('❌')) ? 1 : 0);

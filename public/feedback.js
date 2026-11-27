@@ -5,8 +5,8 @@
   const MAIL = '';
   const EN = () => /^en/i.test(document.documentElement.lang || '');
   const TX = {
-    es: { btn: 'Tu opinión', title: 'Cuéntanos qué tal', sub: 'Bueno o malo: todo ayuda a mejorar FlowLab. No pedimos tus datos.', good: 'Me gusta', ok: 'Más o menos', bad: 'No me gusta', ph: 'Escribe qué te gustó, qué falló o qué te gustaría que tenga…', mail: 'Enviar por correo', copy: 'Copiar mensaje', copied: 'Copiado ✓', close: 'Cerrar', subj: 'Opinión sobre FlowLab Studio', note: 'Se abre tu app de correo con el mensaje listo; tú decides si lo envías.' },
-    en: { btn: 'Feedback', title: 'Tell us what you think', sub: 'Good or bad: it all helps FlowLab improve. We do not ask for your data.', good: 'I like it', ok: 'So-so', bad: "I don't like it", ph: 'What did you like, what broke, what would you add…', mail: 'Send by email', copy: 'Copy message', copied: 'Copied ✓', close: 'Close', subj: 'Feedback about FlowLab Studio', note: 'Your mail app opens with the message ready; you decide whether to send it.' }
+    es: { btn: 'Tu opinión', title: 'Cuéntanos qué tal', sub: 'Bueno o malo: todo ayuda a mejorar FlowLab. No pedimos tus datos.', good: 'Me gusta', ok: 'Más o menos', bad: 'No me gusta', ph: 'Escribe qué te gustó, qué falló o qué te gustaría que tenga…', mail: 'Enviar por correo', copy: 'Copiar mensaje', copied: 'Copiado ✓', close: 'Cerrar', subj: 'Opinión sobre FlowLab Studio', note: 'Se abre tu app de correo con el mensaje listo; tú decides si lo envías.', noteCopy: 'Copia el mensaje y pégalo donde quieras compartirlo. Desde esta página no se envía nada.' },
+    en: { btn: 'Feedback', title: 'Tell us what you think', sub: 'Good or bad: it all helps FlowLab improve. We do not ask for your data.', good: 'I like it', ok: 'So-so', bad: "I don't like it", ph: 'What did you like, what broke, what would you add…', mail: 'Send by email', copy: 'Copy message', copied: 'Copied ✓', close: 'Close', subj: 'Feedback about FlowLab Studio', note: 'Your mail app opens with the message ready; you decide whether to send it.', noteCopy: 'Copy the message and paste it wherever you want to share it. Nothing is sent from this page.' }
   };
   const T = () => TX[EN() ? 'en' : 'es'];
   let dlg, ta, rating = '', last = null;
@@ -32,7 +32,7 @@
     const ml = el('a', 'btn btn-neon', t.mail); ml.id = 'fbMail';
     ml.addEventListener('click', () => { ml.href = 'mailto:' + MAIL + '?subject=' + encodeURIComponent(T().subj) + '&body=' + encodeURIComponent(msg()); });
     ml.href = 'mailto:' + MAIL; if (MAIL) row.append(cp, ml); else row.append(cp);
-    card.append(head, el('p', 'bia-intro', t.sub), faces, ta, row, el('p', 'bia-intro', t.note)); dlg.append(card);
+    card.append(head, el('p', 'bia-intro', t.sub), faces, ta, row, el('p', 'bia-intro', MAIL ? t.note : t.noteCopy)); dlg.append(card);
     dlg.addEventListener('click', e => { if (e.target === dlg) close(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && !dlg.classList.contains('hidden')) close(); });
     document.body.append(dlg);
