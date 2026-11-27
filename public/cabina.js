@@ -32,14 +32,14 @@
   let presetsPedidos = false;
   function cargarPresets() {
     if (presetsPedidos || window.BeatPresets) return; presetsPedidos = true;
-    const sc = document.createElement('script'); sc.src = 'js/presets.js';
+    const sc = document.createElement('script'); sc.src = 'presets.js';
     sc.onerror = () => { presetsPedidos = false; const c = $('#btPro'); if (c) c.textContent = 'No se pudieron cargar las bases (¿sin internet?). Puedes seguir armando tu beat desde cero.'; };
     document.head.appendChild(sc);
   }
   /* ---- Introducción de cada modo: recuadro corto con 3 pasos, "Entendido" lo oculta y se acuerda; el ℹ️ de la cabecera lo vuelve a mostrar ---- */
   const INTRO = {
     cabina: { t: 'Aquí grabas tu voz sobre una base.', pasos: ['Elige una base: un link de YouTube, tu MP3/WAV o un beat de FlowLab.', 'Pulsa REC y rapea. Pulsa otra vez para detener.', 'Escucha tu toma, ajusta la afinación y descárgala.'] },
-    beats: { t: 'Aquí armas tu propio ritmo, sin instalar nada.', pasos: ['Elige un género y toca un ritmo.', 'Cámbialo a tu gusto: enciende pasos, añade instrumentos y cambia el kit.', 'Úsalo en la Cabina o descárgalo.'] },
+    beats: { t: 'Aquí armas tu propio ritmo, sin instalar nada.', pasos: ['Elige un género y escucha una base completa, o pulsa "Sorpréndeme" para una composición de 2:30.', 'Cámbialo a tu gusto: enciende pasos, añade instrumentos y elige sus sonidos.', 'Úsalo en la Cabina o descárgalo.'] },
     escuela: { t: 'Aquí practicas freestyle con juegos cortos: te dan una vocal, palabras o un tema, y tú rimas al ritmo de un beat. Ganas puntos y subes de rango.', pasos: ['Elige un juego. Empieza por Univocal en fácil.', 'Pulsa Empezar y rima al ritmo del beat.', 'Al terminar ves tus puntos, tu XP y tu rango.'] }
   };
   const introCajas = {};
@@ -78,19 +78,15 @@
       setTimeout(() => { window.removeEventListener('flowlab:presets', f); res(!!window.BeatPresets); }, 8000);
     });
   }
-  let modeTransition = 0;
   function irA(m, opciones) {
     const o = opciones || {};
     if (!MODOS[m]) m = 'cabina';
     if (m === modo) return;
-    const antes = modo, transition = ++modeTransition;
-    if (antes === 'escuela' && window.School && School.stop) School.stop();
-    if (m === 'beats' && antes && S && S.stopAll) S.stopAll();
-    modo = m;
+    const antes = modo; modo = m;
     $$('.mode-pane').forEach(p => {
-      p.classList.add('hidden');
-      p.setAttribute('aria-hidden', 'true');
-      p.classList.remove('is-entering');
+      const on = p.dataset.mode === m;
+      p.classList.toggle('hidden', !on); p.setAttribute('aria-hidden', String(!on)); p.classList.toggle('is-entering', on && !!antes);
+      if (on && antes) setTimeout(() => p.classList.remove('is-entering'), 350);
     });
     $$('.mode-tab').forEach(b => {
       const on = b.dataset.modeTab === m;
@@ -106,23 +102,14 @@
     if (m === 'beats') cargarPresets();
     textoModo(m);
     mostrarIntro(m);
+    // Al salir de un modo no queda nada corriendo "a ciegas"
+    if (antes === 'escuela' && window.School && School.stop) School.stop();
+    if (m === 'beats' && antes && S && S.stopAll) S.stopAll();
     actualizarPildora();
     if (PERSISTIR.includes(m)) lsSet('mode', m);
     try { history.replaceState(null, '', location.pathname + location.search + '#' + m); } catch (e) { /* file:// u otro: se ignora */ }
     if (antes && !o.sinScroll) window.scrollTo(0, 0);
-    const revealMode = () => {
-      if (transition !== modeTransition) return;
-      const pane = $('#mode-' + m);
-      pane.classList.remove('hidden');
-      pane.setAttribute('aria-hidden', 'false');
-      pane.classList.add('is-entering');
-      setTimeout(() => pane.classList.remove('is-entering'), 350);
-      window.dispatchEvent(new CustomEvent('flowlab:mode', { detail: { mode: m, prev: antes } }));
-    };
-    if (antes) {
-      if (window.FlowLabLoader) window.FlowLabLoader.showMode(m[0].toUpperCase() + m.slice(1), 650);
-      setTimeout(revealMode, 650);
-    } else revealMode();
+    window.dispatchEvent(new CustomEvent('flowlab:mode', { detail: { mode: m, prev: antes } }));
   }
   function modoInicial() {
     const h = (location.hash || '').slice(1);
@@ -158,20 +145,12 @@
       pulseTarget = null;
     }, 650);
   });
+  // Atajo: Alt+1 Cabina, Alt+2 Beats, Alt+3 Escuela (las flechas siguen funcionando sobre las pestañas)
   document.addEventListener('keydown', e => {
-    const target = e.target;
-    if (target instanceof Element && target.closest('input, textarea, select, [contenteditable="true"]')) return;
-    if (e.altKey && !e.ctrlKey && !e.metaKey && /^[1-3]$/.test(e.key)) {
-      e.preventDefault();
-      irA(['cabina', 'beats', 'escuela'][Number(e.key) - 1]);
-      return;
-    }
-    if (target instanceof Element && target.closest('.mode-tab')) return;
-    if (e.altKey || e.ctrlKey || e.metaKey) return;
-    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-    e.preventDefault();
-    const modos = Object.keys(MODOS), i = modos.indexOf(modo);
-    irA(modos[(i + (e.key === 'ArrowRight' ? 1 : -1) + modos.length) % modos.length]);
+    if (!e.altKey || e.ctrlKey || e.metaKey || !/^[1-3]$/.test(e.key)) return;
+    if (e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+    if (document.body.classList.contains('glos-abierto')) return;
+    e.preventDefault(); irA(['cabina', 'beats', 'escuela'][Number(e.key) - 1]);
   });
   document.addEventListener('click', e => { const b = e.target.closest('[data-mode-go]'); if (b) irA(b.dataset.modeGo); });
   window.addEventListener('hashchange', () => { const h = (location.hash || '').slice(1); if (MODOS[h]) irA(h, { sinScroll: true }); });

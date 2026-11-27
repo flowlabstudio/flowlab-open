@@ -9,7 +9,7 @@
    si no hay (o tarda más de 6 s), usa la copia guardada.
    Al publicar una versión nueva, sube el número de VERSION.
    ===================================================================== */
-const VERSION = 'flowlab-v58';
+const VERSION = 'flowlab-v59';
 const SAMPLE_PACK_FILES = [
   'assets/sounds/packs/01-hard-trap/808s/808-bass-dist.wav',
   'assets/sounds/packs/01-hard-trap/808s/808-bass-sub.wav',
@@ -79,8 +79,9 @@ const INSTRUMENT_SAMPLE_FILES = [
   'assets/sounds/instruments/flute-c4.mp3'
 ];
 const CORE = [
-  './', 'css/styles.css', 'css/legal.css',
-  'js/loader.js', 'js/app.js', 'js/autotune-worklet.js', 'js/freestyle-data.js', 'js/freestyle-school.js', 'js/cabina.js', 'js/beats.js', 'js/presets.js', 'js/help.js', 'js/glosario.js', 'js/ai-coach.js', 'js/i18n.js', 'js/pwa.js',
+  'assets/noise.svg',
+  './', 'styles.css', 'legal.css',
+  'loader.js', 'app.js', 'autotune-worklet.js', 'freestyle-data.js', 'freestyle-school.js', 'cabina.js', 'beats.js', 'presets.js', 'help.js', 'glosario.js', 'ai-coach.js', 'i18n.js', 'pwa.js',
   'burbuja-ia.js', 'graffiti.js', 'feedback.js', 'inicio.js', 'escuela-ia.js', 'editor-voz.js', 'rapear-imagenes.js', 'i18n-en.js', 'i18n-ayudas.js', 'tema-elite.css',
   'assets/img/hero.webp', 'assets/img/hero-2.webp', 'assets/img/genre-trap.webp', 'assets/img/genre-boombap.webp', 'assets/img/genre-reggaeton.webp',
   'assets/img/rap/rap-1.webp', 'assets/img/rap/rap-2.webp', 'assets/img/rap/rap-3.webp', 'assets/img/rap/rap-4.webp',
@@ -95,7 +96,7 @@ const CORE = [
   'assets/fonts/inter-latin-wght.woff2', 'assets/fonts/barlow-condensed-700-latin.woff2', 'assets/fonts/barlow-condensed-800-latin.woff2',
   'assets/fonts/barlow-condensed-900-latin.woff2', 'assets/fonts/permanent-marker-latin.woff2',
   'manifest.json', 'favicon.ico', 'apple-touch-icon.png', 'privacidad.html', '404.html',
-  'assets/logo.svg', 'assets/og-image.png', 'assets/loader-flowlab.png', 'assets/silencio.mp3', 'assets/icon-192.png', 'assets/icon-512.png', 'assets/icon-maskable-512.png'
+  'assets/logo.svg', 'assets/og-image.png', 'assets/loader-flowlab.webp', 'assets/silencio.mp3', 'assets/icon-192.png', 'assets/icon-512.png', 'assets/icon-maskable-512.png'
 ];
 const SLOW_MS = 6000;
 

@@ -55,7 +55,7 @@ const T = {
     pensando: 'Pensando… la primera vez en tu dispositivo el modelo puede tardar en descargarse; mientras tanto se usa la nube.',
     donde_ON_DEVICE: '🟢 Respondió en tu dispositivo', donde_IN_CLOUD: '☁️ Respondió en la nube (Google)', donde_X: 'Respondió',
     rimas: 'Rimas internas posibles', desp: 'Líneas con sílabas muy desparejas', ideas: '3 ideas para continuar',
-    mejorada: 'Versión mejorada (opcional)', copiar: 'Copiar', copiado: '¡Copiado!',
+    mejorada: 'Versión mejorada (opcional)', tuya: 'Es solo una idea: tu letra es tuya, toma lo que te sirva.', copiar: 'Copiar', copiado: '¡Copiado!',
     nadaRimas: 'No encontré rimas internas claras.', nadaDesp: 'Tus líneas están bastante parejas. 👌',
     linea: n => 'Línea ' + n + ': ',
     palabras: '5 palabras', imagenes: '3 imágenes', arranque: 'Un arranque de verso',
@@ -87,7 +87,7 @@ const T = {
     pensando: 'Thinking… the first time, the on-device model may take a while to download; the cloud is used meanwhile.',
     donde_ON_DEVICE: '🟢 Answered on your device', donde_IN_CLOUD: '☁️ Answered in the cloud (Google)', donde_X: 'Answered',
     rimas: 'Possible internal rhymes', desp: 'Lines with very uneven syllables', ideas: '3 ideas to continue',
-    mejorada: 'Improved version (optional)', copiar: 'Copy', copiado: 'Copied!',
+    mejorada: 'Improved version (optional)', tuya: 'It is only an idea: your lyrics are yours, take what helps.', copiar: 'Copy', copiado: 'Copied!',
     nadaRimas: 'I did not find clear internal rhymes.', nadaDesp: 'Your lines are quite even. 👌',
     linea: n => 'Line ' + n + ': ',
     palabras: '5 words', imagenes: '3 images', arranque: 'A verse opener',
@@ -389,7 +389,7 @@ function pintar(cual, d, fuente) {
     const c = seccion(res, t('ideas')); c.append(ul(d.ideas));
     if (d.mejorada) {
       const det = el('details', 'coach-sec'); det.id = 'coachMejorada'; det.append(el('summary', null, t('mejorada')));
-      det.append(el('pre', 'coach-pre', d.mejorada));
+      det.append(el('p', 'coach-help', t('tuya')), el('pre', 'coach-pre', d.mejorada));
       const cp = el('button', 'btn btn-ghost btn-small', t('copiar')); cp.type = 'button';
       cp.addEventListener('click', async () => { try { await navigator.clipboard.writeText(d.mejorada); cp.textContent = t('copiado'); setTimeout(() => { cp.textContent = t('copiar'); }, 1500); } catch (e) { } });
       det.append(cp); res.append(det);

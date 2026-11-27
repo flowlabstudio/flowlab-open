@@ -16,6 +16,7 @@ const out = []; const ok = (c, m) => { out.push((c ? '✅ ' : '❌ ') + m); };
   await new Promise(r => srv.listen(0, '127.0.0.1', r)); const url = 'http://127.0.0.1:' + srv.address().port + '/';
   let b; try { b = await pw.chromium.launch({ channel: 'chrome' }); } catch (e) { b = await pw.chromium.launch(); }
   const p = await b.newPage(); const errs = [], sdk = [];
+  await p.addInitScript(() => { window.SpeechRecognition = class { start() { setTimeout(() => { this.onresult && this.onresult({ results: [[{ transcript: 'my spoken bar is clean' }]] }); this.onend && this.onend(); }, 50); } stop() { } abort() { } }; });
   p.on('pageerror', e => errs.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !/datamuse|ERR_FAILED/i.test(m.text())) errs.push(m.text()); });
   await p.route('https://www.gstatic.com/firebasejs/**', r => { sdk.push(r.request().url()); r.fulfill({ status: 200, contentType: 'text/javascript', body: FAKE[r.request().url().split('/').pop()] || '' }); });
   await p.goto(url, { waitUntil: 'load' }); await p.waitForTimeout(600);
@@ -40,6 +41,8 @@ const out = []; const ok = (c, m) => { out.push((c ? '✅ ' : '❌ ') + m); };
   ok(/second reply line/.test(await p.textContent('.bia-reply')), 'battle: the AI answers the bar');
   ok(/☁/.test(await p.textContent('.bia-badge')), 'battle: the badge says where the answer ran');
   await p.click('.bia-next'); ok(/first reply line/.test(await p.textContent('#batalla .bia-line')), 'battle: the reply opens the next round');
+  await p.waitForTimeout(100); await p.click('.bia-mic'); await p.waitForTimeout(250);
+  ok(/my spoken bar is clean/.test(await p.inputValue('.bia-input')), 'battle: a spoken bar fills the box');
   await p.click('.bia-x');
   await p.selectOption('#langSel', 'en'); ok((await p.textContent('#btnCoach')).includes('AI Coach'), 'the interface switches to English');
   ok(errs.length === 0, 'no console errors ' + JSON.stringify(errs));

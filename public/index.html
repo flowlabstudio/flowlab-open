@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://www.gstatic.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; frame-src https://www.youtube.com https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/; connect-src 'self' https://api.datamuse.com https://content-firebaseappcheck.googleapis.com https://firebasevertexai.googleapis.com https://www.google.com/recaptcha/; img-src 'self' data:; style-src 'self' 'unsafe-inline'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://www.gstatic.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; frame-src https://www.youtube.com https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/; connect-src 'self' https://api.datamuse.com https://content-firebaseappcheck.googleapis.com https://firebasevertexai.googleapis.com https://www.google.com/recaptcha/; img-src 'self'; style-src 'self' 'unsafe-inline'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>FlowLab Studio · Estudio Lírico y Vocal Urbano</title>
 <link rel="icon" href="favicon.ico" sizes="48x48">
@@ -49,7 +49,7 @@
   "image": "https://flowlab-studio.pages.dev/assets/og-image.png"
 }
 </script>
-<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="tema-elite.css">
 <style>
 .app-loader{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#070707;overflow:hidden;transition:opacity .7s ease,visibility .7s}
@@ -62,7 +62,7 @@
 .ld-bars i:nth-child(3n){background:#ff2bd6}
 .ld-bars i:nth-child(odd){animation-delay:.15s}
 .ld-track{position:relative;width:min(60vw,320px);height:3px;background:#1d1d1d;border-radius:3px;overflow:hidden}
-.ld-track b{display:block;height:100%;width:0;background:linear-gradient(90deg,#DEFC07,#00e5ff,#ff2bd6);animation:ld-fill 2.6s ease forwards}
+.ld-track b{display:block;height:100%;width:0;background:linear-gradient(90deg,#DEFC07,#00e5ff,#ff2bd6);animation:ld-fill .9s ease forwards}
 .ld-msg{position:relative;margin:0;font:600 13px/1 Inter,system-ui,sans-serif;letter-spacing:.14em;color:#DEFC07;text-transform:uppercase}
 .ld-sub{position:relative;margin:0;font:400 12px/1.4 Inter,system-ui,sans-serif;color:#9a9a9a}
 @keyframes ld-pulse{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.03);filter:brightness(1.15)}}
@@ -74,7 +74,7 @@
 </head>
 <body>
 <div id="appLoader" class="app-loader" role="status" aria-live="polite" aria-label="Cargando FlowLab Studio" aria-hidden="false">
-  <img class="ld-img" src="assets/loader-flowlab.png" alt="FlowLab Studio" width="520">
+  <img class="ld-img" src="assets/loader-flowlab.webp" alt="FlowLab Studio" width="520">
   <div class="ld-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <div class="ld-track"><b></b></div>
   <p class="ld-msg" id="loaderMsg">Cargando motor de audio…</p>
@@ -864,17 +864,17 @@
   <nav aria-label="Enlaces del pie"><a href="privacidad.html">Privacidad</a></nav>
 </footer>
 
-<script src="js/loader.js"></script>
-<script src="js/freestyle-data.js"></script>
-<script src="js/i18n.js"></script>
-<script src="js/app.js"></script>
-<script src="js/freestyle-school.js"></script>
-<script src="js/cabina.js"></script>
-<script src="js/beats.js"></script>
+<script src="loader.js"></script>
+<script src="freestyle-data.js"></script>
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+<script src="freestyle-school.js"></script>
+<script src="cabina.js"></script>
+<script src="beats.js"></script>
 <div id="updateBar" class="update-bar hidden" role="status" aria-live="polite"><span class="ub-msg">Hay una versión nueva de FlowLab.</span> <button type="button" class="btn btn-neon btn-small" data-update-go>Actualizar</button> <button type="button" class="btn btn-ghost btn-small" data-update-later aria-label="Ahora no">Después</button></div>
-<script src="js/help.js"></script>
-<script src="js/glosario.js"></script>
-<script type="module" src="js/ai-coach.js"></script>
+<script src="help.js"></script>
+<script src="glosario.js"></script>
+<script type="module" src="ai-coach.js"></script>
 <script src="burbuja-ia.js" defer></script>
 <script src="graffiti.js" defer></script>
 <script src="feedback.js" defer></script>
@@ -884,6 +884,6 @@
 <script src="rapear-imagenes.js" defer></script>
 <script src="i18n-en.js" defer></script>
 <script src="i18n-ayudas.js" defer></script>
-<script src="js/pwa.js"></script>
+<script src="pwa.js"></script>
 </body>
 </html>

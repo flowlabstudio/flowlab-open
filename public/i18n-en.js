@@ -8,6 +8,34 @@
 (function () {
   'use strict';
   const D = {
+    "Escribe, graba y mezcla": "Write, record and mix",
+    "Arma tu ritmo": "Build your rhythm",
+    "Entrena tu freestyle": "Train your freestyle",
+    "Una pieza completa, organizada por tiempo y secciones.": "A full piece, organised by time and sections.",
+    "Guitarra": "Guitar",
+    "Cuerdas": "Strings",
+    "Metales": "Brass",
+    "Flauta": "Flute",
+    "Percusión": "Percussion",
+    "Mitad de tempo": "Half time",
+    "te deja elegir la nota de cada paso. En cada pista puedes escoger cualquiera de los 68 samples o usar el sonido automático del kit.": "lets you pick the note of each step. On each track you can choose any of the 68 samples or use the automatic kit sound.",
+    "Clásico de los 90: bombo seco y con pegada, caja crujiente con cuerpo y chasquido.": "90s classic: dry punchy kick, crisp snare with body and snap.",
+    "808 largo y profundo con deslizamiento, clap seco y corto, hi-hats muy cortos y brillantes.": "Long deep sliding 808, short dry clap, very short bright hi-hats.",
+    "Oscuro y frío: 808 deslizante, caja seca y dura, hi-hats rápidos y filosos.": "Dark and cold: sliding 808, dry hard snare, fast sharp hi-hats.",
+    "Reggaetón: bombo seco y corto, rim agudo \"de plástico\" y hi-hats limpios.": "Reggaeton: short dry kick, high \"plastic\" rim and clean hi-hats.",
+    "Suave, redondo y cálido: todo apagadito, con caja blanda y un bajo de seda.": "Soft, round and warm: muted, with a soft snare and silky bass.",
+    "Ir al inicio de FlowLab Studio": "Go to the FlowLab Studio start",
+    "Descargar letra en .TXT": "Download lyrics as .TXT",
+    "Acciones de la toma": "Take actions",
+    "Más acciones de la cabina": "More booth actions",
+    "Volumen de mi beat": "My beat volume",
+    "Instrumentos que puedes añadir": "Instruments you can add",
+    "Quitar esta fila": "Remove this row",
+    "Forma de onda de tu beat": "Waveform of your beat",
+    "Quitar esta capa": "Remove this layer",
+    "Capas que puedes añadir": "Layers you can add",
+    "Herramientas de graffiti": "Graffiti tools",
+    "Usa el reconocimiento de voz del navegador para comprobar si metiste las palabras": "Uses browser speech recognition to check whether you used the words",
     // Cabecera y portadas
     'SESIÓN ·': 'SESSION ·',
     'Rapea. Graba. Mejora.': 'Rap. Record. Improve.',
@@ -260,8 +288,18 @@
     'Rango': 'Rank', 'XP total': 'Total XP', 'Sesiones': 'Sessions', 'Minutos': 'Minutes', 'Racha': 'Streak', 'Mejor racha': 'Best streak', 'Mejores puntajes': 'Best scores',
     'Historial': 'History', '⬇ Exportar': '⬇ Export', '⬆ Importar': '⬆ Import', 'Reiniciar': 'Reset'
   };
-  const de = s => D[s] !== undefined ? D[s] : s;
-  const P = [   // textos con partes variables
+  const ayudas = s => window.AyudasEN && AyudasEN.titulos[s] && AyudasEN.titulos[s][0];   // títulos de las burbujas "?"
+  const de = s => D[s] !== undefined ? D[s] : (ayudas(s) || s);
+  const trozos = s => s.split(' · ').map(de).join(' · ');
+  const P = [
+    [/^(.+) · (.+) · (\d+) secciones · (\d+) BPM$/, (m, k, ins, n, b) => k + ' · ' + ins.split(', ').map(de).join(', ') + ' · ' + n + ' sections · ' + b + ' BPM'],
+    [/^((?:Kit · )?(?:Trap|Bounce|Soul . Vintage) · .+)$/, (m, a) => trozos(a)],
+    [/^(Silenciar capa|Quitar capa|Silenciar|Quitar|Sample de|Volumen de|Elegir notas de) (.+)$/, (m, v, a) => ({ 'Silenciar capa': 'Mute layer', 'Quitar capa': 'Remove layer', 'Silenciar': 'Mute', 'Quitar': 'Remove', 'Sample de': 'Sample for', 'Volumen de': 'Volume of', 'Elegir notas de': 'Pick notes for' }[v]) + ' ' + de(a)],
+    [/^(.+), tecla (\w)$/, (m, a, k) => de(a) + ', key ' + k],
+    [/^(\d+) compases$/, (m, n) => n + ' bars'],
+    [/^Solo (.+)$/, (m, a) => 'Solo ' + de(a)],
+    [/^(Bass|Strings|Rhodes|Sample|Piano|Guitar|Marimba|Brass|Flute) step (\d+): (.+), note La$/, (m, i, n, r) => i + ' step ' + n + ': ' + r + ', note A'],
+   // textos con partes variables
     [/^(.+) · (Fácil|Medio|Difícil)$/, (m, a, n) => a + ' · ' + de(n)],
     [/^([^\p{L}\p{N}]+) (\p{L}.*)$/u, (m, i, a) => i + ' ' + de(a)],   // ícono o raya delante: "🏆 Modo Batalla", "— descripción"
     [/^Ayuda: ronda (.+)$/, (m, a) => 'Help: round ' + de(a)],
@@ -280,7 +318,7 @@
     [/^● grabando(.*)$/, (m, r) => '● recording' + r.replace('modo de respaldo activo', 'backup mode on')],
     [/^Solo (Bombo|Caja|Hi-hat open|Hi-hat|Bajo|Sample|Palmas|Textura)$/, (m, a) => 'Solo ' + de(a)],
     [/^Añadir capa (.+)$/, (m, a) => 'Add layer ' + de(a)],
-    [/^(.+) paso (\d+): (.+)$/, (m, i, n, r) => de(i) + ' step ' + n + ': ' + r.replace('encendido', 'on').replace('apagado', 'off').replace('golpe fuerte', 'hard hit').replace('golpe medio', 'medium hit').replace('golpe suave', 'soft hit').replace('nota ', 'note ')]
+    [/^(.+) paso (\d+): (.+)$/, (m, i, n, r) => de(i) + ' step ' + n + ': ' + r.replace('encendido', 'on').replace('apagado', 'off').replace('golpe fuerte', 'hard hit').replace('golpe media', 'medium hit').replace('golpe medio', 'medium hit').replace('golpe suave', 'soft hit').replace('nota La', 'note A').replace('nota ', 'note ')]
   ];
   const ATTRS = ['placeholder', 'title', 'aria-label'];
   const NO = 'textarea,script,style,[contenteditable="true"],#stimWord,#langSel';
@@ -331,5 +369,6 @@
   }
   const mira = () => (/^en/i.test(document.documentElement.lang || '') ? enciende() : apaga());
   new MutationObserver(mira).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mira); else mira();
+  // se espera a que carguen los demás diccionarios
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mira); else setTimeout(mira, 0);
 })();

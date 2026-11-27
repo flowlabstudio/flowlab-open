@@ -16,6 +16,7 @@
       short: 'Escribe tu barra (al menos 3 palabras).', thinking: 'El rival está pensando…',
       used: '✓ Usaste la palabra obligada.', missed: '✗ Te faltó la palabra obligada.', reply: 'La IA contesta', tip: 'Consejo: ',
       noai: 'Puedes seguir con una frase del banco.',
+      say: '🎙 Decirla en voz', stop: '⏹ Parar', heard: 'Te escucho…', micbad: 'No pude usar el micrófono. Escribe tu barra.',
       end: '¡Batalla terminada! Respiraste, rimaste y no te rendiste. ¿Otra?', again: 'Otra batalla'
     },
     en: {
@@ -27,6 +28,7 @@
       short: 'Type your bar (at least 3 words).', thinking: 'Your rival is thinking…',
       used: '✓ You used the required word.', missed: '✗ You missed the required word.', reply: 'The AI answers', tip: 'Tip: ',
       noai: 'You can keep going with a line from the bank.',
+      say: '🎙 Say it out loud', stop: '⏹ Stop', heard: 'Listening…', micbad: 'I could not use the microphone. Type your bar.',
       end: 'Battle over! You breathed, rhymed and kept going. Another one?', again: 'Another battle'
     }
   };
@@ -94,8 +96,25 @@
   let dlg, ronda = 0, cur = null, timer = 0, resto = 0, lastFocus = null, turno = 0;
 
   function pararReloj() { clearInterval(timer); timer = 0; }
+  /* Dictado de la barra (reconocimiento de voz del navegador; solo si la persona pulsa el botón) */
+  const Voz = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let oyendo = null;
+  function callar() { const r = oyendo; oyendo = null; if (r) { try { r.abort(); } catch (e) { } } }
+  function botonVoz(ta, estado) {
+    const t = L();
+    const b = boton('btn-ghost bia-mic', t.say, () => {
+      if (oyendo) { try { oyendo.stop(); } catch (e) { callar(); } return; }
+      const r = new Voz(), previo = ta.value.trim();
+      r.lang = EN() ? 'en-US' : 'es-PE'; r.interimResults = true; r.continuous = true;
+      r.onresult = ev => { let dicho = ''; for (let i = 0; i < ev.results.length; i++) dicho += ev.results[i][0].transcript; ta.value = (previo + ' ' + dicho.trim()).trim().slice(0, 200); };
+      r.onerror = ev => { if (ev && ev.error !== 'aborted' && ev.error !== 'no-speech') estado.textContent = t.micbad; };
+      r.onend = () => { if (oyendo === r) oyendo = null; b.textContent = t.say; b.setAttribute('aria-pressed', 'false'); if (estado.textContent === t.heard) estado.textContent = ''; };
+      try { r.start(); oyendo = r; b.textContent = t.stop; b.setAttribute('aria-pressed', 'true'); estado.textContent = t.heard; } catch (e) { estado.textContent = t.micbad; }
+    });
+    b.setAttribute('aria-pressed', 'false'); return b;
+  }
   function cerrarBatalla() {
-    pararReloj(); turno++; if (!dlg) return;
+    callar(); pararReloj(); turno++; if (!dlg) return;
     dlg.classList.add('hidden'); document.body.classList.remove('glos-abierto');
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
@@ -105,7 +124,7 @@
     const i = dlg.querySelector('.bia-input'); if (i) i.focus();
   }
   function pintarRonda() {
-    const t = L(), body = dlg.querySelector('.bia-body'); body.textContent = ''; pararReloj(); turno++;
+    const t = L(), body = dlg.querySelector('.bia-body'); body.textContent = ''; callar(); pararReloj(); turno++;
     if (ronda > RONDAS) {
       body.append(el('p', 'bia-end', t.end), boton('btn-neon', t.again, () => { ronda = 0; siguiente(); }));
       return;
@@ -125,12 +144,14 @@
     const fila = el('div', 'bia-actions');
     const enviar = boton('btn-neon bia-send', t.send, () => pedir(ta, estado, res, fila));
     if (!cur.donde) fila.append(boton('btn-ghost', t.other, () => { cur = nuevaFrase(); pintarRonda(); }));
+    if (Voz) fila.append(botonVoz(ta, estado));
     fila.append(boton('btn-ghost bia-skip', t.skip, () => siguiente()), enviar);
     ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); enviar.click(); } });
     body.append(ta, estado, res, fila);
   }
   async function pedir(ta, estado, res, fila) {
     const t = L(), barra = ta.value.trim();
+    callar();
     if (barra.split(/\s+/).filter(Boolean).length < 3) { estado.textContent = t.short; ta.focus(); return; }
     if (!window.Coach || !window.Coach.rival) { estado.textContent = t.noai; return; }
     pararReloj(); const mio = ++turno, botones = [...fila.querySelectorAll('button')];

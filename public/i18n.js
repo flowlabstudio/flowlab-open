@@ -18,7 +18,8 @@
     // ---- Cabecera y modos ----
     { s: '.brand-text p', k: 'tx', en: 'Urban lyrics & vocal studio' },
     { s: '.modes', k: 'attr:aria-label', en: 'FlowLab modes' },
-    { s: '#tab-cabina', k: 'ln', en: 'Booth' }, { s: '#tab-beats', k: 'ln', en: 'Beats' }, { s: '#tab-escuela', k: 'ln', en: 'School' },
+    { s: '#tab-cabina .mode-tab-heading b', k: 'tx', en: 'Booth' }, { s: '#tab-beats .mode-tab-heading b', k: 'tx', en: 'Beats' }, { s: '#tab-escuela .mode-tab-heading b', k: 'tx', en: 'School' },
+    { s: '#tab-cabina small', k: 'tx', en: 'Write, record and mix' }, { s: '#tab-beats small', k: 'tx', en: 'Build your rhythm' }, { s: '#tab-escuela small', k: 'tx', en: 'Train your freestyle' },
     { s: '#modeInfo', k: 'attr:aria-label', en: 'See how this mode works' }, { s: '#modeInfo', k: 'attr:title', en: 'How does this mode work?' },
     { s: '#btnGlosario', k: 'tx', en: '📖 Glossary' }, { s: '#btnGlosario', k: 'attr:title', en: 'Glossary and help: what each word means' },
     { s: '#btnCoach', k: 'tx', en: '🤖 AI Coach' }, { s: '#btnCoach', k: 'attr:title', en: 'Freestyle coach with AI: improve your lyrics or get ideas to vent' },
@@ -65,7 +66,7 @@
     'intro.cabina.t': 'Here you record your voice over a beat.',
     'intro.cabina.1': 'Pick a base: a YouTube link, your MP3/WAV or a FlowLab beat.', 'intro.cabina.2': 'Press REC and rap. Press again to stop.', 'intro.cabina.3': 'Listen to your take, tune it and download it.',
     'intro.beats.t': 'Here you build your own rhythm, with nothing to install.',
-    'intro.beats.1': 'Pick a genre and tap a rhythm.', 'intro.beats.2': 'Make it yours: turn steps on, add instruments and change the kit.', 'intro.beats.3': 'Use it in the Booth or download it.',
+    'intro.beats.1': 'Pick a genre and listen to a full track, or press "Surprise me" for a 2:30 arrangement.', 'intro.beats.2': 'Make it yours: turn steps on, add instruments and choose their sounds.', 'intro.beats.3': 'Use it in the Booth or download it.',
     'intro.escuela.t': 'Here you practice freestyle with short games: they give you a vowel, words or a topic, and you rhyme to a beat. You earn points and rank up.',
     'intro.escuela.1': 'Pick a game. Start with Univocal on easy.', 'intro.escuela.2': 'Press Start and rhyme to the beat.', 'intro.escuela.3': 'At the end you see your points, XP and rank.',
     'suggest.t': 'This app is also available in English.', 'suggest.yes': 'Switch to English', 'suggest.no': 'No thanks'
