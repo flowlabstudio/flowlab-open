@@ -8,6 +8,7 @@
 (function () {
   'use strict';
   const D = {
+    'Cargando sonidos…': 'Loading sounds…',
     "Escribe, graba y mezcla": "Write, record and mix",
     "Arma tu ritmo": "Build your rhythm",
     "Entrena tu freestyle": "Train your freestyle",
@@ -292,6 +293,7 @@
   const de = s => D[s] !== undefined ? D[s] : (ayudas(s) || s);
   const trozos = s => s.split(' · ').map(de).join(' · ');
   const P = [
+    [/^Beat nuevo: (.+) · (\d+) BPM\. Pulsa Sorpréndeme otra vez para uno distinto\.$/, (m, k, b) => 'New beat: ' + k + ' · ' + b + ' BPM. Press Surprise me again for a different one.'],
     [/^(.+) · (.+) · (\d+) secciones · (\d+) BPM$/, (m, k, ins, n, b) => k + ' · ' + ins.split(', ').map(de).join(', ') + ' · ' + n + ' sections · ' + b + ' BPM'],
     [/^((?:Kit · )?(?:Trap|Bounce|Soul . Vintage) · .+)$/, (m, a) => trozos(a)],
     [/^(Silenciar capa|Quitar capa|Silenciar|Quitar|Sample de|Volumen de|Elegir notas de) (.+)$/, (m, v, a) => ({ 'Silenciar capa': 'Mute layer', 'Quitar capa': 'Remove layer', 'Silenciar': 'Mute', 'Quitar': 'Remove', 'Sample de': 'Sample for', 'Volumen de': 'Volume of', 'Elegir notas de': 'Pick notes for' }[v]) + ' ' + de(a)],

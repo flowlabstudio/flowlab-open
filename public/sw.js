@@ -9,7 +9,7 @@
    si no hay (o tarda más de 6 s), usa la copia guardada.
    Al publicar una versión nueva, sube el número de VERSION.
    ===================================================================== */
-const VERSION = 'flowlab-v59';
+const VERSION = 'flowlab-v60';
 const SAMPLE_PACK_FILES = [
   'assets/sounds/packs/01-hard-trap/808s/808-bass-dist.wav',
   'assets/sounds/packs/01-hard-trap/808s/808-bass-sub.wav',

@@ -388,6 +388,7 @@
   }
   const noteHz = (base, idx) => base * Math.pow(2, NOTES[clamp(idx | 0, 0, NOTES.length - 1)] / 12);
 
+  let tonoActual = 0;                                   // semitonos de la composición que está sonando
   function voice(c, type, t, vel, note, K, out, sampleOverride) {
     t = Math.max(t, c.currentTime); vel = clamp(vel, 0.05, 1);
     const sample = sampleOverride || (K.samples && K.samples[type]);
@@ -396,7 +397,8 @@
       (INST[type] && INST[type].soundfont || type === 'sample' && sampleOverride && /\.mp3$/i.test(sampleOverride))
         ? Math.pow(2, (NOTES[noteIndex] - NOTES[1]) / 12) : 1;
     const glide = type === 'bass' && K.glide ? (K.bgl || 1.6) : 1;
-    if (sample && playSample(c, sample, t, vel, out, rate, glide)) return;
+    const afinado = type === 'bass' || (INST[type] && INST[type].soundfont) ? Math.pow(2, tonoActual / 12) : 1;
+    if (sample && playSample(c, sample, t, vel, out, rate * afinado, glide)) return;
     switch (type) {
       case 'kick':
         toneHit(c, t, out, { f0: K.k0, f1: K.k1, fp: K.kp, dec: K.kd, peak: 1.0 * vel });
@@ -534,12 +536,14 @@
       if (section.fx) e.setFx(section.fx, t);
     }
     const sw = (i % 2 === 1) ? s0.swing / 100 * stepDur() * 0.5 : 0, at = t + sw;
+    tonoActual = arrangement ? (arrangement.tono || 0) : 0;
     s0.rows.forEach(r => {
       const source = arrangement ? arrangement.rows.find(row => row.inst === r.inst) : r;
       const lv = source && source.cells[i]; if (!lv) return;
       const out = e.rowOut(r.inst); out.gain.value = rowGain(r);
       if (rowGain(r) > 0) e.trigger(r.inst, at, VEL[lv], source.notes[i], s0.kit, out, r.sample);
     });
+    tonoActual = 0;
     const position = arrangement ? (i + 1) / arrangement.totalSteps : null;
     queue.push({ i, time: at, position });
   }
@@ -560,14 +564,22 @@
       if (demo) demoCount++;
     }
   }
+  let playTurn = 0;
   function play() {
     if (playing) return;
     demo = null;
     S.stopAll();                      // la base de la cabina y la grabación de escucha se detienen: un solo sonido a la vez
     const e = engine(); e.setFx(st.fx); e.setKit(st.kit); e.startVinyl();
-    playing = true; step = 0; scheduledSectionId = ''; nextTime = e.c.currentTime + 0.06; queue = [];
-    pump(); timer = setInterval(pump, TICK);
-    raf = requestAnimationFrame(draw);
+    playing = true; step = 0; scheduledSectionId = ''; queue = [];
+    const turno = ++playTurn;
+    const arranca = () => {
+      if (!playing || turno !== playTurn) return;
+      nextTime = e.c.currentTime + 0.06; pump(); timer = setInterval(pump, TICK); raf = requestAnimationFrame(draw);
+    };
+    const propios = st.rows.map(row => row.sample).filter(Boolean), cargados = sampleBuffers.get(e.c);
+    const faltan = Object.values((KITS[st.kit] || KITS.dusty).samples).concat(propios).some(file => !(cargados && cargados.has(file)));
+    if (!faltan) arranca();
+    else { say('Cargando sonidos…'); Promise.race([loadSamples(e.c, st.kit, propios), new Promise(r => setTimeout(r, 4000))]).then(arranca, arranca); }
     ui.play();
   }
   function stop() {
@@ -1087,7 +1099,8 @@
     return instrument;
   }
   function nextSurpriseAccent(kitId) {
-    return pick(SURPRISE_ACCENTS[kitId] || SURPRISE_ACCENTS.dusty);
+    const todos = SURPRISE_ACCENTS[kitId] || SURPRISE_ACCENTS.dusty, reales = todos.filter(id => KITS[kitId].samples[INST[id].type]);
+    return pick(reales.length ? reales : todos);
   }
   function nextSurpriseKit() {
     const available = KIT_IDS.filter(id => esPro() || !KITS[id].pro);
@@ -1136,7 +1149,7 @@
     const style = Object.assign({}, SURPRISE_STYLES[kitId]);
     style.kitId = kitId;
     style.grooveProfiles = shuffled(profiles);
-    style.melodyMotif = pick(MELODY_MOTIFS);
+    style.progression = pick(PROGRESSIONS);
     style.accentInstrument = nextSurpriseAccent(kitId);
     return style;
   }
@@ -1158,15 +1171,24 @@
     generatedSurpriseRows.add(id);
     return row;
   }
-  const MELODY_MOTIFS = [
-    [[0, 0], [6, 2], [12, 3]],
-    [[0, 3], [4, 2], [11, 0]],
-    [[2, 2], [8, 0], [14, 2]],
-    [[0, 0], [7, 2], [12, 3]],
-    [[3, 2], [8, 3], [14, 0]],
-    [[0, 4], [6, 2], [10, 3]],
-    [[0, 0], [8, 3], [14, 2]]
-  ];
+  /* Frases de 4 compases (idea · respuesta · idea · cierre): se repiten como en una canción, sin notas al azar */
+  const PROGRESSIONS = [[0, 4, 2, 3], [0, 2, 4, 3], [0, 3, 4, 2], [0, 0, 3, 4], [0, 4, 3, 2], [0, 2, 3, 4], [4, 3, 0, 0], [0, 3, 0, 4]];
+  const RHYTHMS = {   // pasos donde entra la melodía; las cuerdas van largas y espaciadas para que no suenen a alarma
+    strings: [[0], [0, 8], [0, 10], [4], [0, 12]],
+    otros: [[0, 6, 12], [0, 3, 8], [2, 8, 11], [0, 7, 10, 14], [0, 4, 11], [3, 8, 12], [0, 10], [0, 6, 8, 14], [2, 6, 12]]
+  };
+  const KEYS = [-4, -3, -2, 0, 1, 2, 3];                // semitonos: cada composición sale en un tono distinto
+  function melodicLine(steps, start) {                  // camina por notas vecinas de la escala, sin saltos bruscos
+    let n = start;
+    return steps.map((step, i) => { if (i) n = clamp(n + pick([-1, -1, 1, 1, 2, 0]), 0, 4); return [step, n]; });
+  }
+  function createPhrase(leadId) {
+    const pool = leadId === 'strings' ? RHYTHMS.strings : RHYTHMS.otros;
+    const [r1, r2, r3] = shuffled(pool), first = pick([0, 0, 2, 3]);
+    const idea = melodicLine(r1, first), answer = melodicLine(r2, clamp(first + pick([1, -1, 2]), 0, 4)), close = melodicLine(r3, clamp(first + 1, 0, 4));
+    close[close.length - 1][1] = pick([0, 0, 3]);        // el cierre descansa en la nota base o en la quinta
+    return [idea, answer, idea, close];
+  }
   function cloneSurpriseRows(sourceRows, blank) {
     return sourceRows.map(row => Object.assign({}, row, {
       cells: blank ? new Array(MAXSTEPS).fill(0) : row.cells.slice(),
@@ -1176,13 +1198,12 @@
   function buildSurprisePattern(style, melodyId, sourceRows, n, variationIndex) {
     const pattern = cloneSurpriseRows(sourceRows, true), rows = new Map(pattern.map(row => [row.inst, row]));
     const melodyIds = Array.isArray(melodyId) ? melodyId : [melodyId];
-    const motif = style.melodyMotif || pick(MELODY_MOTIFS);
     const hit = (id, index, level, note) => {
       const row = rows.get(id); if (!row) return;
       row.cells[index] = level || pick([1, 2, 2, 3]);
       if (INST[id] && INST[id].melodic) row.notes[index] = Number.isInteger(note) ? note : pick([0, 0, 2, 3, 4]);
     };
-    const bars = n / 16, firstBar = variationIndex || 0, progression = [0, 4, 2, 3];
+    const bars = n / 16, firstBar = variationIndex || 0, progression = style.progression || PROGRESSIONS[0];
     for (let bar = 0; bar < bars; bar++) {
       const barIndex = firstBar + bar, phraseBar = barIndex % 4, start = bar * 16;
       const groove = style.grooveProfiles && style.grooveProfiles.length
@@ -1207,7 +1228,8 @@
         if (value && anchor) hit('bajo', start + step, step === 0 ? 3 : 2, step % 4 === 0 ? root : (root + 3) % 5);
       });
       melodyIds.forEach(id => {
-        motif.forEach(([offset, note]) => hit(id, start + offset, offset % 4 === 0 ? 2 : 1, (note + root) % 5));
+        const line = (style.phrase || (style.phrase = createPhrase(id)))[phraseBar];
+        line.forEach(([offset, note]) => hit(id, start + offset, offset % 4 === 0 ? 2 : 1, Math.min(7, note + (root > 2 ? 1 : 0))));
       });
       const accentBar = barIndex % 2 === 1;
       if (accentBar && style.accentInstrument === 'hatopen') hit('hatopen', start + 14, 1);
@@ -1261,24 +1283,15 @@
     shapeArrangementBar(rows, section, sectionBar, sectionBars, melodyIds, style.accentInstrument);
     let signature = arrangementSignature(rows);
     if (!used.has(signature)) { used.add(signature); return rows; }
-    const melody = rows.find(row => melodyIds.includes(row.inst));
-    if (melody) {
-      const activeSteps = melody.cells.reduce((steps, value, index) => {
-        if (value) steps.push(index);
-        return steps;
-      }, []);
-      const originalNotes = activeSteps.map(index => melody.notes[index]);
-      for (let variant = 1; variant < Math.pow(5, activeSteps.length); variant++) {
-        let code = variant;
-        activeSteps.forEach((index, i) => {
-          melody.notes[index] = (originalNotes[i] + code % 5) % 5;
-          code = Math.floor(code / 5);
-        });
-        signature = arrangementSignature(rows);
-        if (!used.has(signature)) { used.add(signature); return rows; }
-      }
+    const hat = rows.find(row => row.inst === 'hat'), base = hat ? hat.cells.slice(0, 16) : null;
+    for (let attempt = 0; hat && attempt < 600; attempt++) {     // golpes suaves de hi-hat entre tiempos
+      base.forEach((v, i) => { hat.cells[i] = v; });
+      for (let k = 0; k <= attempt % 4; k++) { const i = 1 + 2 * Math.floor(Math.random() * 8); hat.cells[i] = hat.cells[i] ? 0 : 1; }
+      signature = arrangementSignature(rows);
+      if (!used.has(signature)) break;
     }
-    throw new Error('No se pudo generar una variación nueva (' + section.type + ', compás ' + sectionBar + ', melodía: ' + melodyIds.join(',') + ').');
+    used.add(signature);
+    return rows;
   }
   function createArrangementSections(totalSteps, baseFx) {
     const sections = [];
@@ -1315,14 +1328,23 @@
   function generateArrangement() {
     if (playing) stop();
     removePreviousSurpriseRows();
-    const kitId = nextSurpriseKit(), style = surpriseStyleFor(kitId);
+    const kitId = nextSurpriseKit();
     KITS[kitId].samples = chooseKitSamples(kitId);
+    const style = surpriseStyleFor(kitId);
     st.arrangement = null; st.steps = 16;
     setKit(kitId, false); setTempo(randomInt(style.bpm), true); setSwing(randomInt(style.swing));
     setFx(Object.assign({}, KITS[kitId].fx, { vinilo: 0 }));
     const melodyId = nextSurpriseInstrument(kitId), melodyIds = [melodyId];
     ['bombo', 'caja', 'hat', 'bajo'].forEach(id => ensureSurpriseRow(id));
-    ensureSurpriseRow(melodyId, 0.46);
+    ensureSurpriseRow(melodyId, melodyId === 'strings' ? 0.32 : 0.44);
+    let tono = 0, huella = '';
+    const vistas = lsGet('beats_vistas', []), usadas = Array.isArray(vistas) ? vistas : [];
+    for (let intento = 0; intento < 30; intento++) {
+      tono = pick(KEYS); style.progression = pick(PROGRESSIONS); style.phrase = createPhrase(melodyId);
+      huella = [kitId, tono, style.progression.join(''), melodyId, JSON.stringify(style.phrase)].join('|');
+      if (!usadas.includes(huella)) break;
+    }
+    lsSet('beats_vistas', usadas.concat(huella).slice(-150));
     ensureSurpriseRow(style.accentInstrument, 0.38);
     const sd = 60 / st.bpm / 4, totalSteps = Math.round(ARRANGEMENT_SECONDS / sd);
     const arrangement = {
@@ -1331,17 +1353,19 @@
       selectedStep: 0,
       melodyId,
       melodyIds,
+      tono,
       samples: Object.assign({}, KITS[kitId].samples),
       sections: createArrangementSections(totalSteps, st.fx),
       rows: st.rows.map(row => ({ inst: row.inst, cells: new Array(totalSteps).fill(0), notes: new Array(totalSteps).fill(0) }))
     };
     const used = new Set();
     arrangement.sections.forEach(section => fillArrangementRange(arrangement, st.rows, style, section.startStep, section.endStep, section, melodyIds, used));
+    arrangement.style = style;
     st.arrangement = arrangement;
     st.steps = 16;
     syncGridFromArrangement();
     repaintAll(); buildSeq(); dirty();
-    say('Beat nuevo: groove del kit, bajo y melodía en armonía. Efectos del kit; vinilo apagado.');
+    say('Beat nuevo: ' + KITS[kitId].n + ' · ' + st.bpm + ' BPM. Pulsa Sorpréndeme otra vez para uno distinto.');
   }
   function addArrangementSection() {
     const arrangement = st.arrangement;
@@ -1367,7 +1391,7 @@
       while (row.cells.length < endStep) row.cells.push(0);
       while (row.notes.length < endStep) row.notes.push(0);
     });
-    fillArrangementRange(arrangement, st.rows, surpriseStyleFor(st.kit), startStep, endStep, section, arrangement.melodyIds || [arrangement.melodyId], used);
+    fillArrangementRange(arrangement, st.rows, arrangement.style || surpriseStyleFor(st.kit), startStep, endStep, section, arrangement.melodyIds || [arrangement.melodyId], used);
     arrangement.sections.push(section);
     arrangement.totalSteps = endStep;
     arrangement.durationSeconds = Math.min(MAX_ARRANGEMENT_SECONDS, arrangement.durationSeconds + extraSteps * sd);
@@ -1378,7 +1402,7 @@
   function randomize() {
     generateArrangement();
   }
-  $('#btRandom').addEventListener('click', () => sorprende());
+  $('#btRandom').addEventListener('click', () => { sorprende(); play(); });   // al pulsar, suena de inmediato
 
   /* ---------------- Mis beats ---------------- */
   const KEY = 'beats', MAX_BEATS = 40;
@@ -1390,7 +1414,7 @@
       rows: s.rows.map(r => ({ inst: r.inst, vol: +r.vol.toFixed(2), mute: !!r.mute, solo: !!r.solo, sample: r.sample || '', cells: r.cells.slice(), notes: r.notes.slice() })),
       arrangement: s.arrangement ? {
         durationSeconds: s.arrangement.durationSeconds, totalSteps: s.arrangement.totalSteps, selectedStep: s.arrangement.selectedStep,
-        melodyId: s.arrangement.melodyId, melodyIds: (s.arrangement.melodyIds || [s.arrangement.melodyId]).slice(), samples: Object.assign({}, s.arrangement.samples),
+        melodyId: s.arrangement.melodyId, tono: s.arrangement.tono || 0, melodyIds: (s.arrangement.melodyIds || [s.arrangement.melodyId]).slice(), samples: Object.assign({}, s.arrangement.samples),
         sections: s.arrangement.sections.map(section => ({ id: section.id, type: section.type, startStep: section.startStep, endStep: section.endStep })),
         rows: s.arrangement.rows.map(row => ({ inst: row.inst, cells: row.cells.slice(), notes: row.notes.slice() }))
       } : null };
@@ -1444,6 +1468,7 @@
       durationSeconds, totalSteps,
       selectedStep: clamp(Math.round(num(input.selectedStep, 0)), 0, Math.max(0, totalSteps - 16)),
       melodyId, melodyIds: melodyIds.length ? melodyIds : [melodyId],
+      tono: clamp(Math.round(num(input.tono, 0)), -6, 6),
       samples, sections, rows: arrangementRows
     };
   }
@@ -1603,6 +1628,7 @@
     s.rows.forEach(row => { e.rowOut(row.inst).gain.value = gainOf(row); });
     arrangement.sections.forEach(section => e.setFx(section.fx || sectionFx(section.type, s.fx), section.startStep * sd));
     for (let i = 0; i < arrangement.totalSteps; i++) {
+      tonoActual = arrangement.tono || 0;
       const local = i;
       const at = i * sd + (i % 2 === 1 ? s.swing / 100 * sd * 0.5 : 0);
       s.rows.forEach(row => {
@@ -1610,6 +1636,7 @@
         if (lv && gainOf(row) > 0) e.trigger(row.inst, at, VEL[lv], source.notes[local], s.kit, e.rowOut(row.inst), row.sample);
       });
     }
+    tonoActual = 0;
     const raw = await oc.startRendering();
     const out = new AudioBuffer({ length: totalN, numberOfChannels: 2, sampleRate: sr });
     const fadeN = Math.min(totalN, Math.round(sr * 0.25)), fadeStart = totalN - fadeN;
